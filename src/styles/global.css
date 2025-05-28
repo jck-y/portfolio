@@ -21,7 +21,6 @@
   margin-bottom: 20px;
   color: #2c3e50;
   position: relative;
-  text-align: center;
 }
 
 .section h2::after {
@@ -79,13 +78,12 @@
   margin-bottom: 20px;
   border-bottom: 2px solid #000;
   padding-bottom: 10px;
-  text-align: center;
 }
 
 .qualification-item {
   background-color: #f9f9f9;
   border: 2px solid #000;
-  border-radius: 10px;
+  border-radius: 10pt;
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -121,7 +119,6 @@
   margin-bottom: 20px;
   border-bottom: 2px solid #000;
   padding-bottom: 10px;
-  text-align: center;
 }
 
 .projects-grid {
@@ -134,7 +131,7 @@
 .project-card {
   background-color: #f9f9f9;
   border: 2px solid #000;
-  border-radius: 10px;
+  border-radius: 10pt;
   padding: 20px;
   text-align: center;
   transition: transform 0.2s;
@@ -158,7 +155,7 @@
 
 .contact-section {
   border: 5px solid #000;
-  border-radius: 20px;
+  border-radius: 20pt;
   padding: 30px;
   background-color: #fff;
   width: 100%;
@@ -236,35 +233,41 @@
 }
 
 .social-links {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
   margin-top: 20px;
 }
 
-.social-links h3 {
-  font-size: 1.5em;
-  color: #020202;
-  margin-bottom: 15px;
+.social-icon {
+  width: 24px;
+  height: 24px;
+  transition: opacity 0.3s;
 }
 
-.social-links-list {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
+.social-icon:hover {
+  opacity: 0.7;
 }
 
-.social-links-list a {
-  font-size: 1.1em;
-  color: #13171b;
+.contact-details {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.contact-details p {
+  font-size: 1em;
+  color: #333;
+  margin: 5px 0;
+}
+
+.contact-details a {
+  color: #1e90ff;
   text-decoration: none;
-  padding: 5px 10px;
-  border: 1px solid #13171b;
-  border-radius: 5px;
-  transition: background-color 0.3s, color 0.3s;
+  padding: 2px 5px;
 }
 
-.social-links-list a:hover {
-  background-color: #676767;
-  color: #fff;
+.contact-details a:hover {
+  text-decoration: underline;
 }
 
 .profile-card-container {
@@ -279,7 +282,7 @@
   margin: 0 auto;
   background-color: #fff;
   border: 5px solid #000;
-  border-radius: 10px;
+  border-radius: 10pt;
 }
 
 .profile-image img {
@@ -316,6 +319,10 @@
   margin-bottom: 20px;
 }
 
+.buttons a {
+  text-decoration: none;
+}
+
 .buttons button {
   padding: 10px 20px;
   border: 2px solid #000;
@@ -327,22 +334,6 @@
 
 .buttons button:hover {
   background-color: #f0f0f0;
-}
-
-.profile-info .social-links {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-.social-icon {
-  width: 24px;
-  height: 24px;
-  transition: opacity 0.3s;
-}
-
-.social-icon:hover {
-  opacity: 0.7;
 }
 
 .nav-icons {
@@ -419,6 +410,10 @@
     height: 28px;
   }
 
+  .contact-details p {
+    font-size: 1.1em;
+  }
+
   .nav-icons {
     flex-direction: column;
     position: fixed;
@@ -428,7 +423,7 @@
     width: 60px;
     padding: 10px;
     background-color: #000;
-    border-radius: 10px;
+    border-radius: 10pt;
   }
 
   .nav-icons .icon {
@@ -557,6 +552,10 @@
 
   .profile-info .social-links {
     gap: 10px;
+  }
+
+  .contact-details p {
+    font-size: 0.9em;
   }
 
   .resume-section {

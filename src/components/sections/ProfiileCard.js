@@ -3,6 +3,8 @@ import profileImage from "../../assets/images/JackyKarongkong.jpg";
 import instagramIcon from "../../assets/icon/instagram.svg";
 import linkedinIcon from "../../assets/icon/linkedin.svg";
 import whatsappIcon from "../../assets/icon/whatsapp.svg";
+import githubIcon from "../../assets/icon/github.svg";
+import cvPdf from "../../assets/pdf/cv.pdf";
 import "../../styles/global.css";
 
 const ProfileCard = () => {
@@ -39,6 +41,27 @@ const ProfileCard = () => {
             rel="noopener noreferrer"
           >
             <img src={whatsappIcon} alt="WhatsApp" className="social-icon" />
+          </a>
+          <a
+            href="https://github.com/jackykg"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src={githubIcon} alt="GitHub" className="social-icon" />
+          </a>
+        </div>
+        <div className="contact-details">
+          <p>
+            Email:{" "}
+            <a href="mailto:j13karongkong@gmail.com">j13karongkong@gmail.com</a>
+          </p>
+          <p>
+            Phone: <a href="tel:+6285157809772">085157809772</a>
+          </p>
+        </div>
+        <div className="buttons">
+          <a href={cvPdf} download="Jacky_Karongkong_CV.pdf">
+            <button>Download CV</button>
           </a>
         </div>
       </div>
