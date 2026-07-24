@@ -1,12 +1,15 @@
 import React from "react";
 import GlassCard from "../../GlassCard";
-
 const ProfileCard = () => {
   return (
     <GlassCard className="p-8 md:p-12">
       <div className="flex flex-col md:flex-row items-center md:items-center gap-8 md:gap-10">
-        <div className="w-28 h-28 md:w-32 md:h-32 flex-shrink-0 rounded-[1.5rem] bg-gradient-to-br from-indigo-400 to-violet-400 flex items-center justify-center text-4xl font-bold text-white shadow-[0_20px_60px_-10px_rgba(108,108,244,0.35)]">
-          JK
+        <div className="w-28 h-28 md:w-32 md:h-32 flex-shrink-0 rounded-[1.5rem] overflow-hidden shadow-[0_20px_60px_-10px_rgba(108,108,244,0.35)]">
+          <img
+            src="/images.jpg"
+            alt="Profile"
+            className="w-full h-full object-cover"
+          />
         </div>
 
         <div className="flex-1 text-center md:text-left">

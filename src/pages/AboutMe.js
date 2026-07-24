@@ -23,8 +23,7 @@ const AboutMe = () => {
             downloads, built a stunting-risk tracking tool used for real health
             evaluations, and integrated LLM chatbots into production. Alongside
             building, I've mentored 500+ students in programming and currently
-            teach Machine Learning and Generative AI to high schoolers — I like
-            the work as much as I like explaining it.
+            teach Machine Learning and Generative AI to high schoolers.
           </p>
         </GlassCard>
 

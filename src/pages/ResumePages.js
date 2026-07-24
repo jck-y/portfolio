@@ -6,7 +6,7 @@ const experience = [
     role: "ICT Teacher",
     org: "SMA Citra Kasih",
     period: "Aug 2025 – Jun 2026",
-    desc: "Taught 80 students (Grades 10–12) Python, data science, and generative AI — guiding LLM chatbot and object-detection projects.",
+    desc: "Taught 80 students (Grades 10–12) Python, data science, and generative AI guiding LLM chatbot and object-detection projects.",
   },
   {
     role: "Fullstack Dev & DevOps",
