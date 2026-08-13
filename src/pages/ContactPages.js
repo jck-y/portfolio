@@ -1,5 +1,6 @@
 import React from "react";
 import GlassCard from "../GlassCard";
+import SectionLabel from "../components/SectionLabel";
 
 const links = [
   {
@@ -19,38 +20,41 @@ const links = [
 const ContactPages = () => {
   return (
     <div>
-      <div className="flex items-center gap-2.5 mb-6">
-        <span className="w-4 h-px bg-violet-300" />
-        <span className="text-xs font-semibold tracking-[0.14em] uppercase text-violet-300">
-          Contact
-        </span>
-      </div>
+      <SectionLabel>Contact</SectionLabel>
 
-      <GlassCard className="px-8 py-16 md:py-20 text-center">
-        <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3 tracking-tight">
+      <GlassCard className="px-6 py-16 md:px-12 md:py-24 text-center">
+        <h2 className="font-display text-3xl md:text-5xl font-semibold text-mist-100 tracking-tightest mb-4">
           Let's build something.
         </h2>
-        <p className="text-gray-400 max-w-md mx-auto mb-8">
+        <p className="text-mist-400 max-w-md mx-auto mb-10 leading-relaxed">
           Open to freelance, full-time, and teaching collaborations. Reach out
           on any channel below.
         </p>
 
         <div className="flex flex-wrap gap-3 justify-center">
-          {links.map((link, i) => (
-            <a
-              key={i}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={
-                link.primary
-                  ? "px-6 py-3 rounded-2xl text-sm font-semibold bg-gradient-to-br from-indigo-400 to-violet-400 text-white hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-8px_rgba(108,108,244,0.4)] transition-all"
-                  : "px-6 py-3 rounded-2xl text-sm font-semibold border border-white/[0.1] bg-white/[0.03] text-white hover:bg-white/[0.06] hover:-translate-y-0.5 transition-all"
-              }
-            >
-              {link.label}
-            </a>
-          ))}
+          {links.map((link, i) =>
+            link.primary ? (
+              <a
+                key={i}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <a
+                key={i}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-ghost"
+              >
+                {link.label}
+              </a>
+            )
+          )}
         </div>
       </GlassCard>
     </div>
