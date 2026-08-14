@@ -5,14 +5,14 @@ import SectionLabel from "../components/SectionLabel";
 const skills = [
   "React",
   "React Native",
-  "Python",
+  "Laravel",
+  "JavaScript / Python",
+  "Firebase & Supabase",
+  "LLM Integration",
+  "Prompt Engineering",
   "AI-Assisted Coding",
-  "LLM / Prompt Engineering",
-  "DevOps · Play Store",
-  "Git / GitHub",
-  "Canva",
-  "Data Structures",
-  "Systems Analysis & Design",
+  "DevOps · Play Console",
+  "Scrum (Agile)",
 ];
 
 const softSkills = [

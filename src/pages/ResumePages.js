@@ -9,25 +9,25 @@ const experience = [
     role: "ICT Teacher",
     org: "SMA Citra Kasih",
     period: "Aug 2025 – Jun 2026",
-    desc: "Taught 80 students (Grades 10–12) Python, data science, and generative AI guiding LLM chatbot and object-detection projects.",
+    desc: "Taught 80 students (Grades 10-12) advanced concepts in Python, Data Science, and Generative AI, successfully guiding them to build functional LLM chatbots and object-detection projects.",
   },
   {
     role: "Fullstack Dev & DevOps",
     org: "Manado Post",
     period: "Jul 2024 – Jan 2025",
-    desc: "Built and integrated an AI chatbot into a React Native app in an 8-person agile team; owned Play Store releases for an app with 10,000+ downloads.",
+    desc: "Integrated an AI chatbot into the Manado Post React Native app and managed Google Play deployment, debugging, and optimization to ensure stability for a user base of 10,000+ downloads.",
   },
   {
     role: "Freelance Web & Mobile Developer",
     org: "Self-employed",
     period: "2024 – Present",
-    desc: "Building custom web and mobile products, using AI tools (Claude, Stitch, Gemini) to speed up delivery.",
+    desc: "Developed multiple production-ready web and mobile apps with React serving 100+ active users, leveraging AI-assisted coding tools to accelerate software delivery.",
   },
   {
     role: "Assistant Lecturer",
     org: "Universitas Klabat",
     period: "2022 – 2025",
-    desc: "Mentored 500 students in Computer Programming and evaluated assignments via Google Classroom.",
+    desc: "Mentored a total of 500 students in Computer Programming (Python) and streamlined the evaluation of coursework and assignments via Google Classroom.",
   },
 ];
 
