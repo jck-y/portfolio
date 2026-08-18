@@ -15,7 +15,7 @@ const AboutMe = () => {
           <p className="text-[15px] leading-[1.85] text-mist-400">
             I'm a Computer Science graduate (Magna Cum Laude, GPA 3.82) from
             Universitas Klabat, specializing in mobile apps, web platforms, and
-            applied AI. I've shipped a React Native news app with 10,000+
+            applied AI. I've shipped a React Native news app with 10.000+
             downloads, built a stunting-risk tracking tool used for real health
             evaluations, and integrated LLM chatbots into production
             applications. Alongside building scalable solutions using

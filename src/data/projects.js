@@ -14,7 +14,7 @@
 export const projects = [
   {
     name: "Manado Post App & AI Chatbot",
-    desc: "React Native news app with an integrated LLM chatbot, debugged and optimized for 10,000+ active downloads on Google Play. (React Native, AI Integration, Web Scraping)",
+    desc: "React Native news app with an integrated LLM chatbot, debugged and optimized for 000+ active downloads on Google Play. (React Native, AI Integration, Web Scraping)",
     device: "mobile",
     slug: "manado-post",
     images: [
@@ -22,6 +22,20 @@ export const projects = [
       "/projects/manado-post/2.webp",
       "/projects/manado-post/3.webp",
       "/projects/manado-post/4.webp",
+    ],
+  },
+  {
+    name: "Digital Graduation Invitation Platform",
+    desc: "Responsive platform streamlining 12th-grade graduation registration with online RSVP, guest management, and automated Google Sheets data collection. (React, Google Apps Script, Fetch API)",
+    device: "mobile",
+    slug: "digital-graduation",
+    images: [
+      "/projects/digital-graduation/2.webp",
+      "/projects/digital-graduation/1.webp",
+      "/projects/digital-graduation/3.webp",
+      "/projects/digital-graduation/4.webp",
+      "/projects/digital-graduation/5.webp",
+      "/projects/digital-graduation/6.webp",
     ],
   },
   {
@@ -35,20 +49,7 @@ export const projects = [
       "/projects/stunting-app/3.webp",
     ],
   },
-  {
-    name: "Digital Graduation Invitation Platform",
-    desc: "Responsive platform streamlining 12th-grade graduation registration with online RSVP, guest management, and automated Google Sheets data collection. (React, Google Apps Script, Fetch API)",
-    device: "mobile",
-    slug: "digital-graduation",
-    images: [
-      "/projects/digital-graduation/1.webp",
-      "/projects/digital-graduation/2.webp",
-      "/projects/digital-graduation/3.webp",
-      "/projects/digital-graduation/4.webp",
-      "/projects/digital-graduation/5.webp",
-      "/projects/digital-graduation/6.webp",
-    ],
-  },
+
   {
     name: "Student Council (OSIS) E-Voting System",
     desc: "Secure, fast, and transparent web application to facilitate a streamlined student council election process. (React, Firebase Auth)",

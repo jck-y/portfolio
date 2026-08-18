@@ -27,8 +27,7 @@ const ContactPages = () => {
           Let's build something.
         </h2>
         <p className="text-mist-400 max-w-md mx-auto mb-10 leading-relaxed">
-          Open to freelance, full-time, and teaching collaborations. Reach out
-          on any channel below.
+          Open for work and collaborations. Reach out on any channel below.
         </p>
 
         <div className="flex flex-wrap gap-3 justify-center">
@@ -53,7 +52,7 @@ const ContactPages = () => {
               >
                 {link.label}
               </a>
-            )
+            ),
           )}
         </div>
       </GlassCard>

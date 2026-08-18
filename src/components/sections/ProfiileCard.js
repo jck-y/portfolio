@@ -27,7 +27,7 @@ const ProfileCard = ({ onContact }) => {
         <div className="flex-1 text-center md:text-left">
           <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] mb-6 font-mono text-[11px] tracking-[0.14em] uppercase text-mist-400">
             <span className="w-1.5 h-1.5 rounded-full bg-accent-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]" />
-            Available for freelance &amp; full-time roles
+            Available for Contract &amp; Fulltime Roles
           </div>
 
           <h1 className="font-display text-[2.5rem] leading-[1.02] md:text-6xl lg:text-7xl font-semibold tracking-tightest text-mist-100">
@@ -37,12 +37,16 @@ const ProfileCard = ({ onContact }) => {
             Software Engineer
           </p>
           <p className="text-mist-400 mt-5 max-w-xl leading-relaxed">
-            Building AI-powered mobile &amp; web products — from React Native
-            apps with 10,000+ downloads to LLM chatbots in the classroom.
+            Building AI-powered mobile &amp; web products, from React and React
+            Native and creating/integrate LLM that can suit needs.
           </p>
 
           <div className="flex flex-wrap gap-3 justify-center md:justify-start mt-8">
-            <a href="#contact" onClick={handleContact} className="btn btn-primary group">
+            <a
+              href="#contact"
+              onClick={handleContact}
+              className="btn btn-primary group"
+            >
               Get in touch <span className="arrow">→</span>
             </a>
             <a

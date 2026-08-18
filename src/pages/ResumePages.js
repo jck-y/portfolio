@@ -15,7 +15,7 @@ const experience = [
     role: "Fullstack Dev & DevOps",
     org: "Manado Post",
     period: "Jul 2024 – Jan 2025",
-    desc: "Integrated an AI chatbot into the Manado Post React Native app and managed Google Play deployment, debugging, and optimization to ensure stability for a user base of 10,000+ downloads.",
+    desc: "Integrated an AI chatbot into the Manado Post React Native app and managed Google Play deployment, debugging, and optimization to ensure stability for a user base of 10.000+ downloads.",
   },
   {
     role: "Freelance Web & Mobile Developer",
