@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import ProfileCard from "../components/sections/ProfiileCard";
 import AboutMe from "./AboutMe";
 import ResumePages from "./ResumePages";
@@ -7,7 +7,29 @@ import EduPages from "./EduPages";
 import ContactPages from "./ContactPages";
 import "../styles/global.css";
 
-// Inline icons — no external asset files needed, keeps the dock self-contained.
+// Three.js + R3F + drei are heavy — loaded as their own chunk so they
+// never block the first paint.
+const Scene3D = React.lazy(() => import("../components/three/Scene3D"));
+
+const SECTIONS = {
+  about: {
+    label: "About",
+    Component: AboutMe,
+  },
+  resume: {
+    label: "Resume & Projects",
+    Component: ResumePages,
+  },
+  education: {
+    label: "Education",
+    Component: EduPages,
+  },
+  contact: {
+    label: "Contact",
+    Component: ContactPages,
+  },
+};
+
 const icons = {
   home: (
     <path
@@ -33,7 +55,7 @@ const icons = {
       strokeLinejoin="round"
     />
   ),
-  edu: (
+  education: (
     <path
       d="M3 8l9-4 9 4-9 4-9-4zm5 3v5c0 1.5 2 3 4 3s4-1.5 4-3v-5"
       strokeWidth="1.8"
@@ -62,132 +84,208 @@ const DockIcon = ({ name }) => (
   </svg>
 );
 
+const CloseIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    className="w-5 h-5"
+  >
+    <path d="M6 6l12 12M18 6L6 18" />
+  </svg>
+);
+
 const HomePages = () => {
-  const homeRef = useRef(null);
-  const aboutMeRef = useRef(null);
-  const resumeRef = useRef(null);
-  const eduRef = useRef(null);
-  const contactRef = useRef(null);
-  const [active, setActive] = useState("Home");
+  const [activeSection, setActiveSection] = useState(null);
+  const [resetSignal, setResetSignal] = useState(0);
   const reduceMotion = useReducedMotion();
 
-  const navItems = [
-    { ref: homeRef, icon: "home", label: "Home" },
-    { ref: aboutMeRef, icon: "about", label: "About" },
-    { ref: resumeRef, icon: "resume", label: "Resume" },
-    { ref: eduRef, icon: "edu", label: "Education" },
-    { ref: contactRef, icon: "contact", label: "Contact" },
-  ];
-
-  const scrollToSection = (ref) => {
-    ref.current?.scrollIntoView({
-      behavior: reduceMotion ? "auto" : "smooth",
-      block: "start",
-    });
-  };
-
-  // Scroll-spy: highlight the dock item for the section in view.
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const item = navItems.find((n) => n.ref.current === entry.target);
-            if (item) setActive(item.label);
-          }
-        });
-      },
-      { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
-    );
-    navItems.forEach((item) => {
-      if (item.ref.current) observer.observe(item.ref.current);
-    });
-    return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const openSection = useCallback((key) => {
+    if (SECTIONS[key]) {
+      setActiveSection(key);
+    }
   }, []);
 
+  const closeSection = useCallback(() => {
+    setActiveSection(null);
+    setResetSignal((n) => n + 1);
+  }, []);
+
+  // Esc closes whatever panel is open.
+  useEffect(() => {
+    if (!activeSection) {
+      return undefined;
+    }
+
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        closeSection();
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+
+    return () => {
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [activeSection, closeSection]);
+
+  const navItems = [
+    {
+      key: "home",
+      icon: "home",
+      label: "Home",
+    },
+    {
+      key: "about",
+      icon: "about",
+      label: "About",
+    },
+    {
+      key: "resume",
+      icon: "resume",
+      label: "Resume",
+    },
+    {
+      key: "education",
+      icon: "education",
+      label: "Education",
+    },
+    {
+      key: "contact",
+      icon: "contact",
+      label: "Contact",
+    },
+  ];
+
+  const ActivePanel = activeSection ? SECTIONS[activeSection].Component : null;
+
   return (
-    <div className="relative min-h-screen bg-ink-950 text-mist-200 font-sans selection:bg-accent-400/25 pb-40 overflow-x-clip">
-      {/* Background: faint engineering grid + restrained ambient glows */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0 bg-dots"
-        style={{
-          maskImage:
-            "radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%)",
-        }}
-      />
-      <div
-        className="pointer-events-none fixed inset-0 z-0"
-        style={{
-          background:
-            "radial-gradient(720px circle at 12% -5%, rgba(52,211,153,0.07), transparent 45%), radial-gradient(640px circle at 88% 12%, rgba(255,255,255,0.05), transparent 45%), radial-gradient(900px circle at 50% 110%, rgba(52,211,153,0.04), transparent 50%)",
-        }}
-      />
+    <div className="app-shell bg-paper-50 text-ink-800 font-sans selection:bg-rose-400/20">
+      {/* The 3D world fills the viewport and is the primary interface. */}
+      <Suspense fallback={null}>
+        <Scene3D
+          activeSection={activeSection}
+          onEnterPortal={openSection}
+          resetSignal={resetSignal}
+        />
+      </Suspense>
 
-      <motion.div
-        initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 pt-24 md:pt-36 px-5 sm:px-8 md:px-12 max-w-container mx-auto"
-        ref={homeRef}
-      >
-        <ProfileCard onContact={() => scrollToSection(contactRef)} />
-      </motion.div>
-
-      <div className="relative z-10 px-5 sm:px-8 md:px-12 max-w-container mx-auto mt-24 space-y-24 md:mt-32 md:space-y-36">
-        <div ref={aboutMeRef} className="scroll-mt-24 md:scroll-mt-28">
-          <AboutMe />
-        </div>
-        <div ref={resumeRef} className="scroll-mt-24 md:scroll-mt-28">
-          <ResumePages />
-        </div>
-        <div ref={eduRef} className="scroll-mt-24 md:scroll-mt-28">
-          <EduPages />
-        </div>
-        <div ref={contactRef} className="scroll-mt-24 md:scroll-mt-28">
-          <ContactPages />
-        </div>
+      {/* HUD — identity card, top-left, over the world. */}
+      <div className="absolute top-5 left-5 md:top-8 md:left-8 z-20">
+        <ProfileCard onContact={() => openSection("contact")} />
       </div>
 
-      {/* Floating dock navigation, with labels on hover and active-section state */}
-      {/* Centering uses framer-motion `x` so the entrance animation doesn't
-          override the horizontal offset (Tailwind -translate-x-1/2 would be
-          replaced by motion's inline transform and push the dock right). */}
+      {/* Drive hint — hidden once a panel is open. */}
+      {!activeSection && (
+        <div className="absolute top-5 right-5 md:top-8 md:right-8 z-20 hidden sm:block bg-paper-50/90 backdrop-blur border border-paper-300 rounded-full px-4 py-2 text-xs text-ink-500">
+          WASD / panah untuk berkendara, dekati objek untuk membuka
+        </div>
+      )}
+
+      {/* Floating dock navigation. */}
       <motion.div
         initial={reduceMotion ? false : { x: "-50%", y: 80, opacity: 0 }}
         animate={{ x: "-50%", y: 0, opacity: 1 }}
-        transition={{ delay: 0.6, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed bottom-4 sm:bottom-7 left-1/2 z-50"
+        transition={{
+          delay: 0.4,
+          duration: 0.6,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        className="fixed bottom-4 sm:bottom-7 left-1/2 z-20"
       >
-        <nav className="flex items-center gap-0.5 p-1 sm:p-1.5 rounded-2xl bg-ink-900/85 border border-white/[0.08] backdrop-blur-xl shadow-[0_20px_50px_-16px_rgba(0,0,0,0.85)]">
+        <nav className="flex items-center gap-0.5 p-1 sm:p-1.5 rounded-2xl bg-paper-50/95 border border-paper-300 backdrop-blur-xl shadow-[0_20px_50px_-24px_rgba(26,22,32,0.4)]">
           {navItems.map((item) => {
-            const isActive = active === item.label;
+            const isActive =
+              item.key === "home" ? !activeSection : activeSection === item.key;
+
             return (
-              <div key={item.label} className="relative group">
-                <span className="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2 hidden sm:block opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[11px] font-mono text-mist-200 whitespace-nowrap bg-ink-800 border border-white/[0.08] rounded-lg px-2.5 py-1 shadow-lg">
+              <div key={item.key} className="relative group">
+                <span className="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2 hidden sm:block opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-xs text-paper-50 whitespace-nowrap bg-ink-950 rounded-lg px-2.5 py-1">
                   {item.label}
                 </span>
+
                 <button
-                  onClick={() => scrollToSection(item.ref)}
+                  onClick={() =>
+                    item.key === "home" ? closeSection() : openSection(item.key)
+                  }
                   aria-label={item.label}
-                  className={`relative p-2 sm:p-2.5 rounded-xl text-mist-500 transition-all duration-200 ${
+                  className={`relative p-2 sm:p-2.5 rounded-xl transition-all duration-200 ${
                     isActive
-                      ? "text-white bg-white/[0.08]"
-                      : "hover:text-white hover:bg-white/[0.05]"
+                      ? "text-rose-500 bg-rose-500/10"
+                      : "text-ink-500 hover:text-ink-950 hover:bg-ink-950/[0.05]"
                   }`}
                 >
                   <DockIcon name={item.icon} />
-                  {isActive && (
-                    <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-accent-400" />
-                  )}
                 </button>
               </div>
             );
           })}
         </nav>
       </motion.div>
+
+      {/* Content panel. */}
+      <AnimatePresence>
+        {activeSection && (
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduceMotion ? {} : { opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 z-30 bg-ink-950/30 flex items-end sm:items-center justify-center p-0 sm:p-6"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                closeSection();
+              }
+            }}
+          >
+            <motion.div
+              initial={
+                reduceMotion
+                  ? false
+                  : {
+                      opacity: 0,
+                      y: 28,
+                      scale: 0.98,
+                    }
+              }
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+              }}
+              exit={
+                reduceMotion
+                  ? {}
+                  : {
+                      opacity: 0,
+                      y: 16,
+                      scale: 0.98,
+                    }
+              }
+              transition={{
+                duration: 0.28,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="relative bg-paper-50 w-full sm:max-w-3xl max-h-[92vh] sm:max-h-[85vh] rounded-t-2xl sm:rounded-2xl overflow-y-auto shadow-[0_40px_80px_-24px_rgba(26,22,32,0.45)]"
+            >
+              <button
+                onClick={closeSection}
+                aria-label="Tutup"
+                className="sticky top-4 float-right mr-4 z-10 p-2 rounded-full bg-paper-100 border border-paper-300 text-ink-600 hover:text-ink-950 hover:border-ink-950/[0.2]"
+              >
+                <CloseIcon />
+              </button>
+
+              <div className="px-6 py-8 sm:px-10 sm:py-12 clear-both">
+                {ActivePanel && <ActivePanel />}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

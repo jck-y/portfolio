@@ -1,40 +1,41 @@
 /* ==========================================================================
-   Portfolio design system — premium AI developer aesthetic
-   Inspired by Nexflow's editorial dark SaaS language: near-black base,
-   strong type hierarchy, hairline borders, restrained single accent.
+   Portfolio design system — white primary, rose secondary.
+   Fraunces carries the display moments; IBM Plex Sans runs everything
+   else. Surfaces stay quiet and flat; the 3D world is the one bold
+   element on the page, so nothing here competes with it.
    ========================================================================== */
 
 :root {
-  --ink-950: #0a0b0e;
-  --ink-900: #101218;
-  --ink-850: #14161d;
-  --ink-800: #1a1d26;
+  --paper-50: #ffffff;
+  --paper-100: #f8f4f5;
+  --paper-200: #efe6e9;
+  --paper-300: #e3d5da;
 
-  --mist-100: #f4f6f8;
-  --mist-200: #e4e7ec;
-  --mist-300: #c6cbd4;
-  --mist-400: #9aa1ad;
-  --mist-500: #7c8491;
-  --mist-600: #5b6270;
+  --ink-950: #1a1620;
+  --ink-800: #3a3340;
+  --ink-600: #6e6774;
+  --ink-500: #8b8490;
+  --ink-400: #a79fac;
 
-  --accent-300: #6ee7b7;
-  --accent-400: #34d399;
-  --accent-500: #10b981;
+  --rose-300: #f2a6c4;
+  --rose-400: #e85d9a;
+  --rose-500: #d6336c;
+  --rose-600: #a32357;
 
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-subtle: rgba(26, 22, 32, 0.09);
+  --border-strong: rgba(26, 22, 32, 0.16);
 }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-block-start: 5.5rem;
 }
 
 body {
   margin: 0;
-  background-color: var(--ink-950);
-  color: var(--mist-200);
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--paper-50);
+  color: var(--ink-800);
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -42,16 +43,16 @@ body {
 }
 
 ::selection {
-  background: rgba(52, 211, 153, 0.25);
-  color: var(--mist-100);
+  background: rgba(214, 51, 108, 0.18);
+  color: var(--ink-950);
 }
 
 :focus-visible {
-  outline: 2px solid rgba(52, 211, 153, 0.55);
+  outline: 2px solid var(--rose-500);
   outline-offset: 2px;
 }
 
-/* Quiet technical scrollbar */
+/* Quiet scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -60,126 +61,93 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #23262e;
+  background: var(--paper-300);
   border-radius: 8px;
-  border: 2px solid var(--ink-950);
+  border: 2px solid var(--paper-50);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2e323c;
+  background: var(--rose-300);
 }
 
-/* Mono eyebrow label — tracked-out, uppercase */
-.eyebrow {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.6875rem;
+/* Small section label — a plain, sentence-case identifier, not a
+   tracked-out uppercase eyebrow. It names the content; it doesn't
+   decorate it. */
+.section-label {
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
   font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--mist-500);
+  font-size: 1rem;
+  color: var(--rose-500);
 }
 
-/* Panel surface — hairline border, top-edge highlight, soft glass */
+/* Panel — a flat surface with a hairline border. No glass gradient,
+   no mouse-tracked spotlight, no hover-tilt: the 3D world already
+   carries the depth/motion budget for this page. */
 .panel {
   position: relative;
   border: 1px solid var(--border-subtle);
-  border-radius: 1.25rem;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.035) 0%,
-    rgba(255, 255, 255, 0.012) 100%
-  );
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  will-change: transform;
-}
-.panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), transparent 38%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-.panel:hover {
-  border-color: var(--border-strong);
-  box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.85);
+  border-radius: 0.875rem;
+  background: var(--paper-50);
 }
 
-/* Buttons — editorial, quiet */
+/* Buttons — one clear primary action, one quiet alternative. No arrow
+   glyph appended by default; motion answers the click, not a hover. */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
   line-height: 1;
-  padding: 0.75rem 1.125rem;
+  padding: 0.8rem 1.25rem;
   border-radius: 0.625rem;
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
-  transition: transform 0.25s ease, background-color 0.25s ease,
-    border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease,
+    border-color 0.15s ease, color 0.15s ease;
 }
-.btn .arrow {
-  display: inline-block;
-  transition: transform 0.25s ease;
-}
-.btn:hover .arrow {
-  transform: translateX(3px);
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn-primary {
-  background: #ffffff;
-  color: var(--ink-950);
+  background: var(--ink-950);
+  color: var(--paper-50);
 }
 .btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 28px -10px rgba(255, 255, 255, 0.28);
+  background: var(--rose-500);
 }
 
 .btn-ghost {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--mist-200);
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--ink-800);
 }
 .btn-ghost:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: var(--rose-500);
+  color: var(--rose-500);
 }
 
-/* Skill chips — mono, technical */
+/* Skill chips — plain, sans, no monospace-for-labels default. */
 .chip {
   display: inline-flex;
   align-items: center;
-  font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: 0.8125rem;
-  color: var(--mist-300);
+  font-weight: 500;
+  color: var(--ink-800);
   padding: 0.5rem 0.9rem;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  background: var(--paper-100);
   cursor: default;
   user-select: none;
-  transition: border-color 0.25s ease, background-color 0.25s ease,
-    transform 0.25s ease, color 0.25s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 .chip:hover {
-  border-color: rgba(52, 211, 153, 0.45);
-  background: rgba(52, 211, 153, 0.06);
-  color: var(--mist-100);
-  transform: translateY(-1px);
-}
-
-/* Background texture — faint engineering grid */
-.bg-dots {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 28px 28px;
+  border-color: var(--rose-400);
+  background: var(--rose-300);
+  background: rgba(214, 51, 108, 0.08);
 }
 
 /* Hide scrollbars on carousel tracks while keeping them scrollable */
@@ -189,6 +157,14 @@ body {
 }
 .scrollbar-none::-webkit-scrollbar {
   display: none;
+}
+
+/* The 3D world owns the viewport — the app doesn't scroll as a page.
+   Individual panels (About, Resume, etc.) scroll internally instead. */
+.app-shell {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
 }
 
 /* Respect reduced-motion preferences */

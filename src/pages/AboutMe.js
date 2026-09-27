@@ -9,10 +9,10 @@ const AboutMe = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
         <GlassCard className="p-8 md:p-10 lg:p-12 md:col-span-2">
-          <h2 className="font-display text-2xl md:text-[2rem] font-semibold text-mist-100 tracking-tight mb-6 leading-snug">
+          <h2 className="font-display text-2xl md:text-[2rem] font-medium text-ink-950 mb-6 leading-snug">
             Full-stack engineer with a teaching habit
           </h2>
-          <p className="text-[15px] leading-[1.85] text-mist-400">
+          <p className="text-[15px] leading-[1.85] text-ink-800">
             I'm a Computer Science graduate (Magna Cum Laude, GPA 3.82) from
             Universitas Klabat, specializing in mobile apps, web platforms, and
             applied AI. I've shipped a React Native news app with 10.000+
@@ -27,18 +27,18 @@ const AboutMe = () => {
 
         <GlassCard className="p-8 md:p-10 flex flex-col justify-between gap-8">
           <div>
-            <div className="font-display text-5xl md:text-[3.4rem] font-semibold tracking-tightest text-mist-100">
+            <div className="font-display text-5xl md:text-[3.4rem] font-medium text-ink-950">
               500+
             </div>
-            <div className="text-sm text-mist-500 mt-2">
+            <div className="text-sm text-ink-500 mt-2">
               Students mentored in Computer Programming
             </div>
           </div>
-          <div className="pt-6 border-t border-white/[0.07]">
-            <div className="font-display text-5xl md:text-[3.4rem] font-semibold tracking-tightest text-mist-100">
+          <div className="pt-6 border-t border-paper-300">
+            <div className="font-display text-5xl md:text-[3.4rem] font-medium text-ink-950">
               10K+
             </div>
-            <div className="text-sm text-mist-500 mt-2">
+            <div className="text-sm text-ink-500 mt-2">
               Downloads on Manado Post app, with 100+ user active
             </div>
           </div>

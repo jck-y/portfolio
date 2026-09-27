@@ -1,0 +1,1984 @@
+diff --git a/package.json b/package.json
+index c11baa3..fdbb4cb 100644
+--- a/package.json
++++ b/package.json
+@@ -3,6 +3,8 @@
+   "version": "0.1.0",
+   "private": true,
+   "dependencies": {
++    "@react-three/drei": "^10.7.9",
++    "@react-three/fiber": "^9.8.1",
+     "@testing-library/dom": "^10.4.0",
+     "@testing-library/jest-dom": "^6.6.3",
+     "@testing-library/react": "^16.3.0",
+@@ -13,6 +15,7 @@
+     "react-dom": "^19.1.0",
+     "react-router-dom": "^7.6.1",
+     "react-scripts": "^5.0.1",
++    "three": "^0.180.0",
+     "web-vitals": "^2.1.4"
+   },
+   "scripts": {
+diff --git a/public/index.html b/public/index.html
+index 9e1056d..4d2a2b0 100644
+--- a/public/index.html
++++ b/public/index.html
+@@ -4,7 +4,7 @@
+     <meta charset="utf-8" />
+     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+     <meta name="viewport" content="width=device-width, initial-scale=1" />
+-    <meta name="theme-color" content="#0A0B0E" />
++    <meta name="theme-color" content="#FFFFFF" />
+     <meta
+       name="description"
+       content="Building AI-powered mobile & web products from React Native apps with 10.000+ downloads to LLM chatbots in the classroom."
+@@ -13,7 +13,7 @@
+     <link rel="preconnect" href="https://fonts.googleapis.com" />
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+     <link
+-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap"
++      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+       rel="stylesheet"
+     />
+     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+diff --git a/public/manifest.json b/public/manifest.json
+index cc878db..fc78d3b 100644
+--- a/public/manifest.json
++++ b/public/manifest.json
+@@ -20,6 +20,6 @@
+   ],
+   "start_url": ".",
+   "display": "standalone",
+-  "theme_color": "#0A0B0E",
+-  "background_color": "#0A0B0E"
++  "theme_color": "#FFFFFF",
++  "background_color": "#FFFFFF"
+ }
+diff --git a/src/GlassCard.js b/src/GlassCard.js
+index 9fed425..a6668e8 100644
+--- a/src/GlassCard.js
++++ b/src/GlassCard.js
+@@ -1,57 +1,20 @@
+-import React, { useRef } from "react";
+-import { motion, useReducedMotion } from "framer-motion";
++import React from "react";
+ 
+ /**
+- * Signature UI element: a refined panel card with a mouse-tracked
+- * spotlight and a whisper-subtle 3D tilt on hover.
+- * Used as the base building block for every section on the page.
+- * Pass `tilt={false}` for cards with interactive content (carousels, forms).
++ * Flat panel — hairline border, no shadow kit, no hover-tilt, no
++ * per-card scroll reveal. The 3D world is this page's one bold,
++ * animated element; every panel around it stays quiet and still so it
++ * doesn't compete for attention.
++ *
++ * Kept the `GlassCard` name and `tilt` prop so nothing importing it
++ * elsewhere had to change — `tilt` is accepted but no longer does
++ * anything, since that mouse-tracked spotlight effect is retired.
+  */
+-const GlassCard = ({ children, className = "", tilt = true }) => {
+-  const ref = useRef(null);
+-  const reduceMotion = useReducedMotion();
+-
+-  const handleMouseMove = (e) => {
+-    if (reduceMotion) return;
+-    const el = ref.current;
+-    if (!el) return;
+-    const rect = el.getBoundingClientRect();
+-    const x = e.clientX - rect.left;
+-    const y = e.clientY - rect.top;
+-    const rx = (y / rect.height - 0.5) * -2;
+-    const ry = (x / rect.width - 0.5) * 2;
+-    el.style.setProperty("--mx", `${x}px`);
+-    el.style.setProperty("--my", `${y}px`);
+-    el.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+-  };
+-
+-  const handleMouseLeave = () => {
+-    if (ref.current) ref.current.style.transform = "";
+-  };
+-
++const GlassCard = ({ children, className = "" }) => {
+   return (
+-    <motion.div
+-      ref={ref}
+-      {...(tilt
+-        ? { onMouseMove: handleMouseMove, onMouseLeave: handleMouseLeave }
+-        : {})}
+-      initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+-      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+-      viewport={{ once: true, margin: "-60px" }}
+-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+-      className={`panel group relative overflow-hidden rounded-panel ${className}`}
+-    >
+-      {tilt && (
+-        <div
+-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+-          style={{
+-            background:
+-              "radial-gradient(420px circle at var(--mx,50%) var(--my,50%), rgba(52,211,153,0.07), transparent 60%)",
+-          }}
+-        />
+-      )}
+-      <div className="relative z-10">{children}</div>
+-    </motion.div>
++    <div className={`panel relative overflow-hidden ${className}`}>
++      {children}
++    </div>
+   );
+ };
+ 
+diff --git a/src/components/ProjectShowcase.js b/src/components/ProjectShowcase.js
+index 4d03dea..1ae5f91 100644
+--- a/src/components/ProjectShowcase.js
++++ b/src/components/ProjectShowcase.js
+@@ -3,43 +3,19 @@ import { useReducedMotion } from "framer-motion";
+ import GlassCard from "../GlassCard";
+ 
+ const ChevronLeft = () => (
+-  <svg
+-    viewBox="0 0 24 24"
+-    fill="none"
+-    stroke="currentColor"
+-    strokeWidth="1.8"
+-    strokeLinecap="round"
+-    strokeLinejoin="round"
+-    className="w-4 h-4"
+-  >
++  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+     <path d="M15 6l-6 6 6 6" />
+   </svg>
+ );
+ 
+ const ChevronRight = () => (
+-  <svg
+-    viewBox="0 0 24 24"
+-    fill="none"
+-    stroke="currentColor"
+-    strokeWidth="1.8"
+-    strokeLinecap="round"
+-    strokeLinejoin="round"
+-    className="w-4 h-4"
+-  >
++  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+     <path d="M9 6l6 6-6 6" />
+   </svg>
+ );
+ 
+ const ImageIcon = () => (
+-  <svg
+-    viewBox="0 0 24 24"
+-    fill="none"
+-    stroke="currentColor"
+-    strokeWidth="1.5"
+-    strokeLinecap="round"
+-    strokeLinejoin="round"
+-    className="w-6 h-6 opacity-50"
+-  >
++  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 opacity-50">
+     <rect x="3" y="5" width="18" height="14" rx="2" />
+     <circle cx="9" cy="10" r="1.5" />
+     <path d="M5 18l5-5 3 3 4-4 2 2" />
+@@ -48,7 +24,7 @@ const ImageIcon = () => (
+ 
+ /* Empty slot — tells the user exactly which file to drop in */
+ const Placeholder = ({ label }) => (
+-  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-mist-500">
++  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-ink-400">
+     <ImageIcon />
+     <span className="font-mono text-[11px]">{label}</span>
+   </div>
+@@ -56,40 +32,30 @@ const Placeholder = ({ label }) => (
+ 
+ /* Phone frame for mobile apps */
+ const PhoneFrame = ({ src, label, alt }) => (
+-  <div className="w-full max-w-[230px] mx-auto rounded-[2.1rem] border border-white/[0.12] bg-ink-850 p-1.5 shadow-[0_24px_50px_-20px_rgba(0,0,0,0.7)]">
+-    <div className="relative rounded-[1.7rem] overflow-hidden aspect-[9/19] bg-ink-900">
++  <div className="w-full max-w-[230px] mx-auto rounded-[2.1rem] border border-ink-950/[0.12] bg-paper-200 p-1.5">
++    <div className="relative rounded-[1.7rem] overflow-hidden aspect-[9/19] bg-paper-300">
+       {src ? (
+-        <img
+-          src={src}
+-          alt={alt}
+-          loading="lazy"
+-          className="absolute inset-0 w-full h-full object-cover object-top"
+-        />
++        <img src={src} alt={alt} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-top" />
+       ) : (
+         <Placeholder label={label} />
+       )}
+-      <span className="pointer-events-none absolute top-2 left-1/2 -translate-x-1/2 w-14 h-3.5 rounded-full bg-ink-950/80 border border-white/[0.06]" />
++      <span className="pointer-events-none absolute top-2 left-1/2 -translate-x-1/2 w-14 h-3.5 rounded-full bg-ink-950/80" />
+     </div>
+   </div>
+ );
+ 
+ /* Browser frame for web apps */
+ const BrowserFrame = ({ src, label, alt }) => (
+-  <div className="w-full overflow-hidden rounded-xl border border-white/[0.12] bg-ink-850 shadow-[0_24px_50px_-20px_rgba(0,0,0,0.7)]">
+-    <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/[0.07] bg-ink-900/70">
+-      <span className="w-2.5 h-2.5 rounded-full bg-white/[0.12]" />
+-      <span className="w-2.5 h-2.5 rounded-full bg-white/[0.12]" />
+-      <span className="w-2.5 h-2.5 rounded-full bg-white/[0.12]" />
+-      <span className="ml-2 flex-1 h-5 rounded-md bg-white/[0.05] border border-white/[0.06]" />
++  <div className="w-full overflow-hidden rounded-xl border border-ink-950/[0.12] bg-paper-200">
++    <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-paper-300 bg-paper-100">
++      <span className="w-2.5 h-2.5 rounded-full bg-ink-950/[0.15]" />
++      <span className="w-2.5 h-2.5 rounded-full bg-ink-950/[0.15]" />
++      <span className="w-2.5 h-2.5 rounded-full bg-ink-950/[0.15]" />
++      <span className="ml-2 flex-1 h-5 rounded-md bg-paper-50 border border-paper-300" />
+     </div>
+-    <div className="relative aspect-[16/10] bg-ink-900">
++    <div className="relative aspect-[16/10] bg-paper-300">
+       {src ? (
+-        <img
+-          src={src}
+-          alt={alt}
+-          loading="lazy"
+-          className="absolute inset-0 w-full h-full object-cover object-top"
+-        />
++        <img src={src} alt={alt} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-top" />
+       ) : (
+         <Placeholder label={label} />
+       )}
+@@ -102,7 +68,7 @@ const BrowserFrame = ({ src, label, alt }) => (
+  * Carousel uses native scroll-snap, so it swipes naturally on touch
+  * and works with trackpads; arrows + dots cover desktop.
+  */
+-const ProjectShowcase = ({ project, index }) => {
++const ProjectShowcase = ({ project }) => {
+   const trackRef = useRef(null);
+   const [current, setCurrent] = useState(0);
+   const reduceMotion = useReducedMotion();
+@@ -113,62 +79,40 @@ const ProjectShowcase = ({ project, index }) => {
+   const handleScroll = () => {
+     const el = trackRef.current;
+     if (!el) return;
+-    const idx = Math.min(
+-      total - 1,
+-      Math.max(0, Math.round(el.scrollLeft / el.clientWidth))
+-    );
++    const idx = Math.min(total - 1, Math.max(0, Math.round(el.scrollLeft / el.clientWidth)));
+     setCurrent(idx);
+   };
+ 
+   const scrollToSlide = (i) => {
+     const el = trackRef.current;
+     if (!el) return;
+-    el.scrollTo({
+-      left: i * el.clientWidth,
+-      behavior: reduceMotion ? "auto" : "smooth",
+-    });
++    el.scrollTo({ left: i * el.clientWidth, behavior: reduceMotion ? "auto" : "smooth" });
+   };
+ 
+   const step = (dir) => {
+     const el = trackRef.current;
+     if (!el) return;
+-    el.scrollBy({
+-      left: dir * el.clientWidth,
+-      behavior: reduceMotion ? "auto" : "smooth",
+-    });
++    el.scrollBy({ left: dir * el.clientWidth, behavior: reduceMotion ? "auto" : "smooth" });
+   };
+ 
+   return (
+-    <GlassCard tilt={false} className="p-6 md:p-8">
++    <GlassCard className="p-6 md:p-8">
+       <div className="flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-10">
+         {/* Project info */}
+         <div className="lg:w-[38%] lg:flex-shrink-0 lg:pt-2">
+-          <div className="font-mono text-xs text-mist-600 mb-3">
+-            0{index + 1}
+-          </div>
+-          <h3 className="font-display text-xl md:text-2xl font-semibold text-mist-100 tracking-tight mb-2">
++          <h3 className="font-display text-xl md:text-2xl font-medium text-ink-950 mb-2">
+             {project.name}
+           </h3>
+-          <p className="text-sm text-mist-400 leading-relaxed mb-4">
+-            {project.desc}
+-          </p>
+-          <div className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-mist-500 border border-white/[0.08] rounded-full px-3 py-1">
+-            <span
+-              className={`w-1.5 h-1.5 rounded-full ${
+-                isMobile ? "bg-accent-400/80" : "bg-mist-500/80"
+-              }`}
+-            />
++          <p className="text-sm text-ink-600 leading-relaxed mb-4">{project.desc}</p>
++          <div className="inline-flex items-center gap-2 text-xs text-ink-500 border border-paper-300 rounded-full px-3 py-1">
++            <span className={`w-1.5 h-1.5 rounded-full ${isMobile ? "bg-rose-500" : "bg-ink-400"}`} />
+             {isMobile ? "Mobile" : "Web"}
+           </div>
+         </div>
+ 
+         {/* Screenshot carousel */}
+         <div className="flex-1 min-w-0 w-full">
+-          <div
+-            className="relative"
+-            role="region"
+-            aria-label={`Screenshots — ${project.name}`}
+-          >
++          <div className="relative" role="region" aria-label={`Screenshots — ${project.name}`}>
+             <div
+               ref={trackRef}
+               onScroll={handleScroll}
+@@ -178,23 +122,13 @@ const ProjectShowcase = ({ project, index }) => {
+                 <div
+                   key={i}
+                   className={`snap-start shrink-0 ${
+-                    isMobile
+-                      ? "w-[66%] sm:w-[46%] lg:w-[40%]"
+-                      : "w-[82%] sm:w-[56%] lg:w-[50%]"
++                    isMobile ? "w-[66%] sm:w-[46%] lg:w-[40%]" : "w-[82%] sm:w-[56%] lg:w-[50%]"
+                   }`}
+                 >
+                   {isMobile ? (
+-                    <PhoneFrame
+-                      src={src}
+-                      label={`screenshot-0${i + 1}.png`}
+-                      alt={`${project.name} — screenshot ${i + 1}`}
+-                    />
++                    <PhoneFrame src={src} label={`screenshot-0${i + 1}.png`} alt={`${project.name} — screenshot ${i + 1}`} />
+                   ) : (
+-                    <BrowserFrame
+-                      src={src}
+-                      label={`screenshot-0${i + 1}.png`}
+-                      alt={`${project.name} — screenshot ${i + 1}`}
+-                    />
++                    <BrowserFrame src={src} label={`screenshot-0${i + 1}.png`} alt={`${project.name} — screenshot ${i + 1}`} />
+                   )}
+                 </div>
+               ))}
+@@ -206,7 +140,7 @@ const ProjectShowcase = ({ project, index }) => {
+                   onClick={() => step(-1)}
+                   disabled={current === 0}
+                   aria-label="Previous screenshot"
+-                  className="absolute left-1 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-white/[0.1] bg-ink-900/85 backdrop-blur text-mist-300 hover:text-white hover:border-white/[0.2] transition-all disabled:opacity-30 disabled:pointer-events-none"
++                  className="absolute left-1 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-ink-950/[0.12] bg-paper-50/90 backdrop-blur text-ink-600 hover:text-ink-950 hover:border-ink-950/[0.25] transition-all disabled:opacity-30 disabled:pointer-events-none"
+                 >
+                   <ChevronLeft />
+                 </button>
+@@ -214,7 +148,7 @@ const ProjectShowcase = ({ project, index }) => {
+                   onClick={() => step(1)}
+                   disabled={current === total - 1}
+                   aria-label="Next screenshot"
+-                  className="absolute right-1 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-white/[0.1] bg-ink-900/85 backdrop-blur text-mist-300 hover:text-white hover:border-white/[0.2] transition-all disabled:opacity-30 disabled:pointer-events-none"
++                  className="absolute right-1 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-ink-950/[0.12] bg-paper-50/90 backdrop-blur text-ink-600 hover:text-ink-950 hover:border-ink-950/[0.25] transition-all disabled:opacity-30 disabled:pointer-events-none"
+                 >
+                   <ChevronRight />
+                 </button>
+@@ -230,9 +164,7 @@ const ProjectShowcase = ({ project, index }) => {
+                 onClick={() => scrollToSlide(i)}
+                 aria-label={`Go to screenshot ${i + 1}`}
+                 className={`h-1.5 rounded-full transition-all duration-300 ${
+-                  current === i
+-                    ? "w-5 bg-accent-400"
+-                    : "w-1.5 bg-white/[0.15] hover:bg-white/[0.3]"
++                  current === i ? "w-5 bg-rose-500" : "w-1.5 bg-ink-950/[0.15] hover:bg-ink-950/[0.3]"
+                 }`}
+               />
+             ))}
+diff --git a/src/components/SectionLabel.js b/src/components/SectionLabel.js
+index 2aa958c..61ad1b8 100644
+--- a/src/components/SectionLabel.js
++++ b/src/components/SectionLabel.js
+@@ -1,16 +1,12 @@
+ import React from "react";
+ 
+ /**
+- * Section header eyebrow — mono, tracked-out, with a short accent rule.
+- * Keeps the editorial label treatment consistent across every section.
++ * Names the section. Sentence case, no letter-spacing/uppercase
++ * treatment, no decorative rule — just a small serif identifier in the
++ * accent color.
+  */
+ const SectionLabel = ({ children }) => {
+-  return (
+-    <div className="flex items-center gap-3 mb-8">
+-      <span className="w-8 h-px bg-accent-400/70" />
+-      <span className="eyebrow">{children}</span>
+-    </div>
+-  );
++  return <div className="section-label mb-5">{children}</div>;
+ };
+ 
+ export default SectionLabel;
+diff --git a/src/components/sections/ProfiileCard.js b/src/components/sections/ProfiileCard.js
+index 3c92b91..af34d9f 100644
+--- a/src/components/sections/ProfiileCard.js
++++ b/src/components/sections/ProfiileCard.js
+@@ -1,6 +1,11 @@
+ import React from "react";
+-import GlassCard from "../../GlassCard";
+ 
++/**
++ * Compact identity HUD — sits over the 3D world instead of being a
++ * full-width hero block, since the world itself is now the page's
++ * opening moment. Solid paper background (not glass) so it stays
++ * legible against whatever's moving behind it.
++ */
+ const ProfileCard = ({ onContact }) => {
+   const handleContact = (e) => {
+     e.preventDefault();
+@@ -8,67 +13,56 @@ const ProfileCard = ({ onContact }) => {
+   };
+ 
+   return (
+-    <GlassCard className="p-8 md:p-12 lg:p-14">
+-      <div className="flex flex-col md:flex-row items-center md:items-center gap-8 md:gap-12">
+-        {/* Portrait — framed like a product shot */}
++    <div className="pointer-events-auto bg-paper-50 border border-paper-300 rounded-panel shadow-[0_18px_40px_-20px_rgba(26,22,32,0.35)] p-5 md:p-6 w-[calc(100vw-2.5rem)] max-w-sm">
++      <div className="flex items-center gap-4">
+         <div className="relative flex-shrink-0">
+-          <div className="w-28 h-28 md:w-36 md:h-36 rounded-panel overflow-hidden ring-1 ring-white/[0.12] bg-ink-850 shadow-[0_24px_60px_-16px_rgba(0,0,0,0.8)]">
+-            <img
+-              src="/images.jpg"
+-              alt="Profile"
+-              className="w-full h-full object-cover"
+-            />
++          <div className="w-14 h-14 md:w-16 md:h-16 rounded-panel overflow-hidden ring-1 ring-paper-300">
++            <img src="/images.jpg" alt="Profile" className="w-full h-full object-cover" />
+           </div>
+-          <span className="absolute -bottom-2 -right-2 w-8 h-8 rounded-lg border border-white/[0.08] bg-ink-900 flex items-center justify-center font-mono text-[10px] text-accent-300 shadow-lg">
++          <span className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-md border border-paper-300 bg-ink-950 flex items-center justify-center font-mono text-[9px] text-rose-300">
+             {"</>"}
+           </span>
+         </div>
+-
+-        <div className="flex-1 text-center md:text-left">
+-          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] mb-6 font-mono text-[11px] tracking-[0.14em] uppercase text-mist-400">
+-            <span className="w-1.5 h-1.5 rounded-full bg-accent-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]" />
+-            Available for Contract &amp; Fulltime Roles
+-          </div>
+-
+-          <h1 className="font-display text-[2.5rem] leading-[1.02] md:text-6xl lg:text-7xl font-semibold tracking-tightest text-mist-100">
++        <div>
++          <h1 className="font-display text-xl md:text-2xl font-medium leading-tight text-ink-950">
+             Jacky Karongkong
+           </h1>
+-          <p className="font-mono text-sm md:text-base text-accent-300 mt-3">
+-            Software Engineer
+-          </p>
+-          <p className="text-mist-400 mt-5 max-w-xl leading-relaxed">
+-            Building AI-powered mobile &amp; web products, from React and React
+-            Native and creating/integrate LLM that can suit needs.
+-          </p>
+-
+-          <div className="flex flex-wrap gap-3 justify-center md:justify-start mt-8">
+-            <a
+-              href="#contact"
+-              onClick={handleContact}
+-              className="btn btn-primary group"
+-            >
+-              Get in touch <span className="arrow">→</span>
+-            </a>
+-            <a
+-              href="https://github.com/jck-y"
+-              target="_blank"
+-              rel="noopener noreferrer"
+-              className="btn btn-ghost"
+-            >
+-              GitHub
+-            </a>
+-            <a
+-              href="https://www.linkedin.com/in/jacky-karongkong-70a896293/"
+-              target="_blank"
+-              rel="noopener noreferrer"
+-              className="btn btn-ghost"
+-            >
+-              LinkedIn
+-            </a>
+-          </div>
++          <p className="text-sm text-rose-500 mt-0.5">Software Engineer</p>
+         </div>
+       </div>
+-    </GlassCard>
++
++      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-paper-300 bg-paper-100 mt-4 text-xs text-ink-600">
++        <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
++        Available for contract &amp; fulltime roles
++      </div>
++
++      <p className="text-sm text-ink-600 mt-4 leading-relaxed">
++        Building AI-powered mobile &amp; web products, from React and React
++        Native and creating/integrate LLM that can suit needs.
++      </p>
++
++      <div className="flex flex-wrap gap-2.5 mt-5">
++        <a href="#contact" onClick={handleContact} className="btn btn-primary">
++          Get in touch
++        </a>
++        <a
++          href="https://github.com/jck-y"
++          target="_blank"
++          rel="noopener noreferrer"
++          className="btn btn-ghost"
++        >
++          GitHub
++        </a>
++        <a
++          href="https://www.linkedin.com/in/jacky-karongkong-70a896293/"
++          target="_blank"
++          rel="noopener noreferrer"
++          className="btn btn-ghost"
++        >
++          LinkedIn
++        </a>
++      </div>
++    </div>
+   );
+ };
+ 
+diff --git a/src/components/three/PortalMarker.js b/src/components/three/PortalMarker.js
+new file mode 100644
+index 0000000..04b57e0
+--- /dev/null
++++ b/src/components/three/PortalMarker.js
+@@ -0,0 +1,110 @@
++import React, { useRef } from "react";
++import { useFrame } from "@react-three/fiber";
++import { Html } from "@react-three/drei";
++
++const ROSE = "#D6336C";
++const INK = "#1A1620";
++const PAPER = "#FFFFFF";
++
++// Each section gets its own silhouette instead of four identical
++// markers — a stand-in monolith, a stack of plates, a graduation
++// shape, a signal beacon — so the world reads as a place, not a kit.
++
++const AboutShape = () => (
++  <group>
++    <mesh position={[0, 1.1, 0]}>
++      <capsuleGeometry args={[0.55, 1.1, 8, 16]} />
++      <meshStandardMaterial color={PAPER} roughness={0.5} />
++    </mesh>
++    <mesh position={[0, 1.35, 0]} rotation={[Math.PI / 2, 0, 0]}>
++      <torusGeometry args={[0.75, 0.05, 12, 32]} />
++      <meshStandardMaterial color={ROSE} emissive={ROSE} emissiveIntensity={0.4} />
++    </mesh>
++  </group>
++);
++
++const ResumeShape = () => (
++  <group>
++    {[0, 1, 2, 3].map((i) => (
++      <mesh key={i} position={[i * 0.05, 0.16 + i * 0.28, i * -0.04]} rotation={[0, i * 0.07, 0]}>
++        <boxGeometry args={[1.3, 0.14, 0.95]} />
++        <meshStandardMaterial color={i === 3 ? ROSE : INK} roughness={0.45} />
++      </mesh>
++    ))}
++  </group>
++);
++
++const EducationShape = () => (
++  <group>
++    <mesh position={[0, 0.55, 0]}>
++      <coneGeometry args={[0.85, 1.1, 4]} />
++      <meshStandardMaterial color={INK} roughness={0.5} />
++    </mesh>
++    <mesh position={[0, 1.18, 0]} rotation={[0, Math.PI / 4, 0]}>
++      <boxGeometry args={[1.15, 0.08, 1.15]} />
++      <meshStandardMaterial color={PAPER} roughness={0.4} />
++    </mesh>
++    <mesh position={[0.5, 1.0, 0.5]}>
++      <sphereGeometry args={[0.08, 12, 12]} />
++      <meshStandardMaterial color={ROSE} emissive={ROSE} emissiveIntensity={0.5} />
++    </mesh>
++  </group>
++);
++
++function ContactShape({ reduceMotion }) {
++  const ring = useRef(null);
++  useFrame((_, delta) => {
++    if (ring.current && !reduceMotion) ring.current.rotation.z += delta * 0.6;
++  });
++  return (
++    <group>
++      <mesh position={[0, 0.9, 0]}>
++        <sphereGeometry args={[0.55, 24, 24]} />
++        <meshStandardMaterial color={PAPER} roughness={0.3} />
++      </mesh>
++      <mesh ref={ring} position={[0, 0.9, 0]}>
++        <torusGeometry args={[0.8, 0.045, 12, 40]} />
++        <meshStandardMaterial color={ROSE} emissive={ROSE} emissiveIntensity={0.5} />
++      </mesh>
++    </group>
++  );
++}
++
++const SHAPES = {
++  about: AboutShape,
++  resume: ResumeShape,
++  education: EducationShape,
++  contact: ContactShape,
++};
++
++const PortalMarker = ({ position, label, shapeKey, active, reduceMotion }) => {
++  const Shape = SHAPES[shapeKey] || AboutShape;
++  const ringRef = useRef(null);
++
++  useFrame((state3) => {
++    if (!ringRef.current) return;
++    const pulse = active && !reduceMotion ? 1 + Math.sin(state3.clock.elapsedTime * 4) * 0.06 : 1;
++    ringRef.current.scale.set(pulse, 1, pulse);
++  });
++
++  return (
++    <group position={position}>
++      <Shape reduceMotion={reduceMotion} />
++
++      {/* Ground trigger ring — visible proximity feedback so the
++          trigger radius is never a guess. */}
++      <mesh ref={ringRef} position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
++        <ringGeometry args={[1.9, 2.15, 48]} />
++        <meshBasicMaterial color={active ? ROSE : INK} transparent opacity={active ? 0.5 : 0.12} />
++      </mesh>
++
++      <Html position={[0, 2.15, 0]} center distanceFactor={9} occlude>
++        <div className="whitespace-nowrap font-display italic text-ink-950 text-base pointer-events-none select-none">
++          {label}
++        </div>
++      </Html>
++    </group>
++  );
++};
++
++export default PortalMarker;
+diff --git a/src/components/three/Scene3D.js b/src/components/three/Scene3D.js
+new file mode 100644
+index 0000000..cad315c
+--- /dev/null
++++ b/src/components/three/Scene3D.js
+@@ -0,0 +1,101 @@
++import React, { Suspense, useEffect, useState } from "react";
++import { Canvas } from "@react-three/fiber";
++import { useReducedMotion } from "framer-motion";
++import World from "./World";
++import TouchControls from "./TouchControls";
++import useDriveInput from "../../hooks/useDriveInput";
++
++function supportsWebGL() {
++  try {
++    const canvas = document.createElement("canvas");
++    return !!(
++      window.WebGLRenderingContext &&
++      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
++    );
++  } catch (e) {
++    return false;
++  }
++}
++
++const StaticFallback = () => (
++  <div className="absolute inset-0 flex items-center justify-center bg-paper-100 px-6">
++    <p className="font-display italic text-ink-950 text-lg text-center max-w-xs">
++      Dunia 3D tidak didukung di perangkat ini — pakai menu di bawah untuk membuka tiap bagian.
++    </p>
++  </div>
++);
++
++class Canvas3DErrorBoundary extends React.Component {
++  constructor(props) {
++    super(props);
++    this.state = { hasError: false };
++  }
++  static getDerivedStateFromError() {
++    return { hasError: true };
++  }
++  componentDidCatch(error) {
++    // eslint-disable-next-line no-console
++    console.warn("3D world disabled after a render error:", error);
++  }
++  render() {
++    return this.state.hasError ? <StaticFallback /> : this.props.children;
++  }
++}
++
++const MOBILE_QUERY = "(max-width: 768px)";
++const TOUCH_QUERY = "(pointer: coarse)";
++
++const Scene3D = ({ activeSection, onEnterPortal, resetSignal }) => {
++  const reduceMotion = useReducedMotion();
++  const { inputRef, setTouchInput, releaseTouchInput } = useDriveInput();
++  const [webglOK, setWebglOK] = useState(true);
++  const [isMobile, setIsMobile] = useState(false);
++  const [isTouch, setIsTouch] = useState(false);
++
++  useEffect(() => {
++    setWebglOK(supportsWebGL());
++    const mq = window.matchMedia(MOBILE_QUERY);
++    const tq = window.matchMedia(TOUCH_QUERY);
++    setIsMobile(mq.matches);
++    setIsTouch(tq.matches);
++    const onMq = (e) => setIsMobile(e.matches);
++    const onTq = (e) => setIsTouch(e.matches);
++    mq.addEventListener("change", onMq);
++    tq.addEventListener("change", onTq);
++    return () => {
++      mq.removeEventListener("change", onMq);
++      tq.removeEventListener("change", onTq);
++    };
++  }, []);
++
++  if (!webglOK) return <StaticFallback />;
++
++  const paused = !!activeSection;
++
++  return (
++    <div className="absolute inset-0">
++      <Canvas3DErrorBoundary>
++        <Canvas
++          dpr={isMobile ? 1 : [1, 2]}
++          gl={{ antialias: !isMobile, powerPreference: "high-performance" }}
++          camera={{ position: [0, 4.5, 14.7], fov: 55 }}
++        >
++          <Suspense fallback={null}>
++            <World
++              inputRef={inputRef}
++              paused={paused}
++              onEnterPortal={onEnterPortal}
++              resetSignal={resetSignal}
++              activeSection={activeSection}
++              reduceMotion={reduceMotion}
++            />
++          </Suspense>
++        </Canvas>
++      </Canvas3DErrorBoundary>
++
++      {isTouch && !paused && <TouchControls onMove={setTouchInput} onRelease={releaseTouchInput} />}
++    </div>
++  );
++};
++
++export default Scene3D;
+diff --git a/src/components/three/TouchControls.js b/src/components/three/TouchControls.js
+new file mode 100644
+index 0000000..8d9e574
+--- /dev/null
++++ b/src/components/three/TouchControls.js
+@@ -0,0 +1,77 @@
++import React, { useCallback, useRef, useState } from "react";
++
++const BASE_RADIUS = 46;
++
++/**
++ * A single-thumb drag pad: distance from center maps to forward speed,
++ * horizontal offset maps to steering. Deliberately simple (no physics,
++ * no acceleration curve of its own) so it's reliable without on-device
++ * testing.
++ */
++const TouchControls = ({ onMove, onRelease }) => {
++  const baseRef = useRef(null);
++  const activeTouch = useRef(null);
++  const [knob, setKnob] = useState({ x: 0, y: 0 });
++
++  const updateFromClient = useCallback(
++    (clientX, clientY) => {
++      const base = baseRef.current;
++      if (!base) return;
++      const rect = base.getBoundingClientRect();
++      const cx = rect.left + rect.width / 2;
++      const cy = rect.top + rect.height / 2;
++      let dx = clientX - cx;
++      let dy = clientY - cy;
++      const dist = Math.hypot(dx, dy);
++      if (dist > BASE_RADIUS) {
++        dx = (dx / dist) * BASE_RADIUS;
++        dy = (dy / dist) * BASE_RADIUS;
++      }
++      setKnob({ x: dx, y: dy });
++      onMove(-(dy / BASE_RADIUS), -(dx / BASE_RADIUS));
++    },
++    [onMove]
++  );
++
++  const handleTouchStart = (e) => {
++    const t = e.touches[0];
++    activeTouch.current = t.identifier;
++    updateFromClient(t.clientX, t.clientY);
++  };
++
++  const handleTouchMove = (e) => {
++    if (activeTouch.current === null) return;
++    const touch = Array.from(e.touches).find((t) => t.identifier === activeTouch.current);
++    if (touch) updateFromClient(touch.clientX, touch.clientY);
++  };
++
++  const handleEnd = () => {
++    activeTouch.current = null;
++    setKnob({ x: 0, y: 0 });
++    onRelease();
++  };
++
++  return (
++    <div
++      ref={baseRef}
++      onTouchStart={handleTouchStart}
++      onTouchMove={handleTouchMove}
++      onTouchEnd={handleEnd}
++      onTouchCancel={handleEnd}
++      className="absolute bottom-8 left-8 w-24 h-24 rounded-full bg-ink-950/[0.06] border border-ink-950/[0.14] select-none"
++      style={{ touchAction: "none", WebkitTapHighlightColor: "transparent" }}
++    >
++      <div
++        className="absolute w-11 h-11 rounded-full bg-paper-50 border border-ink-950/[0.2]"
++        style={{
++          left: "50%",
++          top: "50%",
++          transform: `translate(calc(-50% + ${knob.x}px), calc(-50% + ${knob.y}px))`,
++          boxShadow: "0 4px 10px rgba(26,22,32,0.15)",
++        }}
++      />
++    </div>
++  );
++};
++
++export default TouchControls;
+diff --git a/src/components/three/Vehicle.js b/src/components/three/Vehicle.js
+new file mode 100644
+index 0000000..fc5f720
+--- /dev/null
++++ b/src/components/three/Vehicle.js
+@@ -0,0 +1,137 @@
++import React, { useEffect, useRef } from "react";
++import { useFrame } from "@react-three/fiber";
++
++const MAX_SPEED = 6.5;
++const ACCEL = 9;
++const FRICTION = 5;
++const TURN_RATE = 2.6;
++const BOUND = 12.5;
++const TRIGGER_RADIUS = 2.3;
++const CAM_HEIGHT = 4.2;
++const CAM_BACK = 6.2;
++
++/**
++ * Kinematic (not physics-engine) movement on purpose: acceleration,
++ * turning and friction are plain numbers updated each frame. It's far
++ * more predictable to tune correctly without playtesting than a rigid
++ * body simulation, and plenty convincing for a small exploration space.
++ */
++const Vehicle = ({ inputRef, portals, paused, onEnterPortal, resetSignal, reduceMotion }) => {
++  const group = useRef(null);
++  const wheelRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
++  const car = useRef({ x: 0, z: 8.5, heading: Math.PI, speed: 0 });
++  const nearPortal = useRef(null);
++  const distanceTraveled = useRef(0);
++  const camReady = useRef(false);
++
++  // When a content panel closes, back the car away from the portal it
++  // just triggered so it doesn't immediately re-trigger on the next frame.
++  useEffect(() => {
++    if (resetSignal === 0) return;
++    const c = car.current;
++    c.x -= Math.sin(c.heading) * 3.2;
++    c.z -= Math.cos(c.heading) * 3.2;
++    c.x = Math.max(-BOUND, Math.min(BOUND, c.x));
++    c.z = Math.max(-BOUND, Math.min(BOUND, c.z));
++    c.speed = 0;
++    nearPortal.current = null;
++  }, [resetSignal]);
++
++  useFrame((three, delta) => {
++    const c = car.current;
++    const input = inputRef.current;
++    const dt = Math.min(delta, 0.05); // guard against huge jumps on tab refocus
++
++    if (!paused) {
++      const targetSpeed = input.forward * MAX_SPEED;
++      if (input.forward !== 0) {
++        c.speed += (targetSpeed - c.speed) * Math.min(1, ACCEL * dt);
++      } else {
++        c.speed -= c.speed * Math.min(1, FRICTION * dt);
++      }
++      if (Math.abs(c.speed) < 0.02) c.speed = 0;
++
++      const speedFactor = Math.max(-1, Math.min(1, c.speed / MAX_SPEED));
++      c.heading += input.turn * TURN_RATE * speedFactor * dt;
++
++      c.x += Math.sin(c.heading) * c.speed * dt;
++      c.z += Math.cos(c.heading) * c.speed * dt;
++      c.x = Math.max(-BOUND, Math.min(BOUND, c.x));
++      c.z = Math.max(-BOUND, Math.min(BOUND, c.z));
++
++      distanceTraveled.current += Math.abs(c.speed) * dt;
++    }
++
++    if (group.current) {
++      group.current.position.set(c.x, 0, c.z);
++      group.current.rotation.y = c.heading;
++    }
++    wheelRefs.forEach((w) => {
++      if (w.current) w.current.rotation.x = distanceTraveled.current * 1.6;
++    });
++
++    // Chase camera — snaps instantly under reduced motion instead of
++    // smoothing, since a lerped trailing camera is itself a motion cue.
++    const targetX = c.x - Math.sin(c.heading) * CAM_BACK;
++    const targetZ = c.z - Math.cos(c.heading) * CAM_BACK;
++    const alpha = reduceMotion || !camReady.current ? 1 : Math.min(1, 3.2 * dt);
++    three.camera.position.x += (targetX - three.camera.position.x) * alpha;
++    three.camera.position.y += (CAM_HEIGHT - three.camera.position.y) * alpha;
++    three.camera.position.z += (targetZ - three.camera.position.z) * alpha;
++    three.camera.lookAt(c.x, 0.7, c.z);
++    camReady.current = true;
++
++    // Proximity check — closest portal wins, fires once per approach.
++    if (!paused && portals && portals.length) {
++      let closest = null;
++      let closestDist = Infinity;
++      for (const p of portals) {
++        const dx = p.position[0] - c.x;
++        const dz = p.position[2] - c.z;
++        const d = Math.sqrt(dx * dx + dz * dz);
++        if (d < closestDist) {
++          closestDist = d;
++          closest = p;
++        }
++      }
++      if (closest && closestDist < TRIGGER_RADIUS) {
++        if (nearPortal.current !== closest.key) {
++          nearPortal.current = closest.key;
++          onEnterPortal(closest.key);
++        }
++      } else {
++        nearPortal.current = null;
++      }
++    }
++  });
++
++  return (
++    <group ref={group}>
++      <mesh position={[0, 0.42, 0]}>
++        <boxGeometry args={[1.15, 0.45, 2.1]} />
++        <meshStandardMaterial color="#FFFFFF" roughness={0.35} metalness={0.1} />
++      </mesh>
++      <mesh position={[0, 0.78, -0.15]}>
++        <boxGeometry args={[0.85, 0.32, 1.05]} />
++        <meshStandardMaterial color="#1A1620" roughness={0.4} />
++      </mesh>
++      <mesh position={[0, 0.5, 0.2]}>
++        <boxGeometry args={[1.17, 0.08, 1.2]} />
++        <meshStandardMaterial color="#D6336C" roughness={0.3} emissive="#D6336C" emissiveIntensity={0.15} />
++      </mesh>
++      {[
++        [-0.62, 0.72],
++        [0.62, 0.72],
++        [-0.62, -0.72],
++        [0.62, -0.72],
++      ].map(([x, z], i) => (
++        <mesh key={i} ref={wheelRefs[i]} position={[x, 0.22, z]} rotation={[0, 0, Math.PI / 2]}>
++          <cylinderGeometry args={[0.22, 0.22, 0.18, 16]} />
++          <meshStandardMaterial color="#2B2630" roughness={0.85} />
++        </mesh>
++      ))}
++    </group>
++  );
++};
++
++export default Vehicle;
+diff --git a/src/components/three/World.js b/src/components/three/World.js
+new file mode 100644
+index 0000000..bc18640
+--- /dev/null
++++ b/src/components/three/World.js
+@@ -0,0 +1,49 @@
++import React from "react";
++import Vehicle from "./Vehicle";
++import PortalMarker from "./PortalMarker";
++
++export const PORTALS = [
++  { key: "about", label: "About", shapeKey: "about", position: [-7, 0, -6] },
++  { key: "resume", label: "Resume & Projects", shapeKey: "resume", position: [7, 0, -6] },
++  { key: "education", label: "Education", shapeKey: "education", position: [-7, 0, 6] },
++  { key: "contact", label: "Contact", shapeKey: "contact", position: [7, 0, 6] },
++];
++
++const World = ({ inputRef, paused, onEnterPortal, resetSignal, activeSection, reduceMotion }) => {
++  return (
++    <>
++      <color attach="background" args={["#FFFFFF"]} />
++      <fog attach="fog" args={["#FFFFFF", 16, 30]} />
++      <ambientLight intensity={0.95} />
++      <directionalLight position={[8, 10, 5]} intensity={0.5} />
++
++      <mesh rotation={[-Math.PI / 2, 0, 0]}>
++        <planeGeometry args={[34, 34]} />
++        <meshStandardMaterial color="#F8F4F5" roughness={0.95} />
++      </mesh>
++      <gridHelper args={[34, 34, "#E3D5DA", "#EFE6E9"]} position={[0, 0.015, 0]} />
++
++      {PORTALS.map((p) => (
++        <PortalMarker
++          key={p.key}
++          position={p.position}
++          label={p.label}
++          shapeKey={p.shapeKey}
++          active={activeSection === p.key}
++          reduceMotion={reduceMotion}
++        />
++      ))}
++
++      <Vehicle
++        inputRef={inputRef}
++        portals={PORTALS}
++        paused={paused}
++        onEnterPortal={onEnterPortal}
++        resetSignal={resetSignal}
++        reduceMotion={reduceMotion}
++      />
++    </>
++  );
++};
++
++export default World;
+diff --git a/src/hooks/useDriveInput.js b/src/hooks/useDriveInput.js
+new file mode 100644
+index 0000000..664856b
+--- /dev/null
++++ b/src/hooks/useDriveInput.js
+@@ -0,0 +1,66 @@
++import { useEffect, useRef } from "react";
++
++const KEY_MAP = {
++  ArrowUp: "forward",
++  KeyW: "forward",
++  ArrowDown: "back",
++  KeyS: "back",
++  ArrowLeft: "left",
++  KeyA: "left",
++  ArrowRight: "right",
++  KeyD: "right",
++};
++
++/**
++ * One shared instance lives in Scene3D, outside the <Canvas>. Its
++ * `inputRef` is read every animation frame by the R3F Vehicle; its
++ * setters are called by the on-screen touch joystick. A plain ref
++ * (not React state) is used deliberately — input changes shouldn't
++ * trigger a re-render, only the render loop needs to see them.
++ */
++export default function useDriveInput() {
++  const inputRef = useRef({ forward: 0, turn: 0 });
++  const keysRef = useRef({ forward: false, back: false, left: false, right: false });
++  const touchActive = useRef(false);
++
++  useEffect(() => {
++    const recompute = () => {
++      if (touchActive.current) return; // touch input takes priority while dragging
++      const k = keysRef.current;
++      inputRef.current.forward = (k.forward ? 1 : 0) - (k.back ? 1 : 0);
++      inputRef.current.turn = (k.left ? 1 : 0) - (k.right ? 1 : 0);
++    };
++    const handleDown = (e) => {
++      const action = KEY_MAP[e.code];
++      if (!action) return;
++      keysRef.current[action] = true;
++      recompute();
++    };
++    const handleUp = (e) => {
++      const action = KEY_MAP[e.code];
++      if (!action) return;
++      keysRef.current[action] = false;
++      recompute();
++    };
++    window.addEventListener("keydown", handleDown);
++    window.addEventListener("keyup", handleUp);
++    return () => {
++      window.removeEventListener("keydown", handleDown);
++      window.removeEventListener("keyup", handleUp);
++    };
++  }, []);
++
++  const setTouchInput = (forward, turn) => {
++    touchActive.current = true;
++    inputRef.current.forward = forward;
++    inputRef.current.turn = turn;
++  };
++
++  const releaseTouchInput = () => {
++    touchActive.current = false;
++    inputRef.current.forward = 0;
++    inputRef.current.turn = 0;
++  };
++
++  return { inputRef, setTouchInput, releaseTouchInput };
++}
+diff --git a/src/pages/AboutMe.js b/src/pages/AboutMe.js
+index 2144653..a53daf9 100644
+--- a/src/pages/AboutMe.js
++++ b/src/pages/AboutMe.js
+@@ -9,10 +9,10 @@ const AboutMe = () => {
+ 
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
+         <GlassCard className="p-8 md:p-10 lg:p-12 md:col-span-2">
+-          <h2 className="font-display text-2xl md:text-[2rem] font-semibold text-mist-100 tracking-tight mb-6 leading-snug">
++          <h2 className="font-display text-2xl md:text-[2rem] font-medium text-ink-950 mb-6 leading-snug">
+             Full-stack engineer with a teaching habit
+           </h2>
+-          <p className="text-[15px] leading-[1.85] text-mist-400">
++          <p className="text-[15px] leading-[1.85] text-ink-800">
+             I'm a Computer Science graduate (Magna Cum Laude, GPA 3.82) from
+             Universitas Klabat, specializing in mobile apps, web platforms, and
+             applied AI. I've shipped a React Native news app with 10.000+
+@@ -27,18 +27,18 @@ const AboutMe = () => {
+ 
+         <GlassCard className="p-8 md:p-10 flex flex-col justify-between gap-8">
+           <div>
+-            <div className="font-display text-5xl md:text-[3.4rem] font-semibold tracking-tightest text-mist-100">
++            <div className="font-display text-5xl md:text-[3.4rem] font-medium text-ink-950">
+               500+
+             </div>
+-            <div className="text-sm text-mist-500 mt-2">
++            <div className="text-sm text-ink-500 mt-2">
+               Students mentored in Computer Programming
+             </div>
+           </div>
+-          <div className="pt-6 border-t border-white/[0.07]">
+-            <div className="font-display text-5xl md:text-[3.4rem] font-semibold tracking-tightest text-mist-100">
++          <div className="pt-6 border-t border-paper-300">
++            <div className="font-display text-5xl md:text-[3.4rem] font-medium text-ink-950">
+               10K+
+             </div>
+-            <div className="text-sm text-mist-500 mt-2">
++            <div className="text-sm text-ink-500 mt-2">
+               Downloads on Manado Post app, with 100+ user active
+             </div>
+           </div>
+diff --git a/src/pages/ContactPages.js b/src/pages/ContactPages.js
+index 143c7c9..b270180 100644
+--- a/src/pages/ContactPages.js
++++ b/src/pages/ContactPages.js
+@@ -23,10 +23,10 @@ const ContactPages = () => {
+       <SectionLabel>Contact</SectionLabel>
+ 
+       <GlassCard className="px-6 py-16 md:px-12 md:py-24 text-center">
+-        <h2 className="font-display text-3xl md:text-5xl font-semibold text-mist-100 tracking-tightest mb-4">
++        <h2 className="font-display text-3xl md:text-5xl font-medium text-ink-950 mb-4">
+           Let's build something.
+         </h2>
+-        <p className="text-mist-400 max-w-md mx-auto mb-10 leading-relaxed">
++        <p className="text-ink-600 max-w-md mx-auto mb-10 leading-relaxed">
+           Open for work and collaborations. Reach out on any channel below.
+         </p>
+ 
+diff --git a/src/pages/EduPages.js b/src/pages/EduPages.js
+index 3945956..323173c 100644
+--- a/src/pages/EduPages.js
++++ b/src/pages/EduPages.js
+@@ -15,19 +15,11 @@ const skills = [
+   "Scrum (Agile)",
+ ];
+ 
+-const softSkills = [
+-  "Analytical Thinking",
+-  "Problem Solving",
+-  "Teamwork",
+-  "Communication",
+-];
++const softSkills = ["Analytical Thinking", "Problem Solving", "Teamwork", "Communication"];
+ 
+ const achievements = [
+   { place: "3rd Place", detail: "Indoneris National Essay Competition, 2024" },
+-  {
+-    place: "3rd Place",
+-    detail: "Klabat University Research Competition, 2025",
+-  },
++  { place: "3rd Place", detail: "Klabat University Research Competition, 2025" },
+   { place: "5th Place", detail: "Innovation Project, SMA Citra Kasih, 2026" },
+ ];
+ 
+@@ -39,27 +31,29 @@ const EduPages = () => {
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
+         {/* Education */}
+         <GlassCard className="p-8 md:p-10">
+-          <h2 className="font-display text-xl font-semibold text-mist-100 mb-6">
++          <h2 className="font-display text-xl font-medium text-ink-950 mb-6">
+             Education
+           </h2>
+-          <h3 className="text-[15.5px] font-semibold text-mist-100">
++          <h3 className="text-[15.5px] font-semibold text-ink-950">
+             Bachelor of Computer Science
+           </h3>
+-          <p className="text-mist-400 text-sm mt-1">Universitas Klabat</p>
+-          <p className="font-mono text-xs text-mist-500 mt-2">
+-            2021 – 2025 · Magna Cum Laude, GPA 3.82
++          <p className="text-ink-600 text-sm mt-1">Universitas Klabat</p>
++          <p className="text-xs text-ink-500 mt-2">
++            2021 – 2025, Magna Cum Laude, GPA 3.82
+           </p>
+ 
+-          <div className="mt-8 pt-6 border-t border-white/[0.07]">
+-            <h3 className="eyebrow mb-3">Languages</h3>
+-            <p className="text-sm text-mist-400">English – Intermediate</p>
+-            <p className="text-sm text-mist-400 mt-1">Indonesian – Native</p>
++          <div className="mt-8 pt-6 border-t border-paper-300">
++            <h3 className="font-display italic text-rose-500 text-sm mb-3">
++              Languages
++            </h3>
++            <p className="text-sm text-ink-600">English, Intermediate</p>
++            <p className="text-sm text-ink-600 mt-1">Indonesian, Native</p>
+           </div>
+         </GlassCard>
+ 
+         {/* Skills */}
+         <GlassCard className="p-8 md:p-10 md:col-span-2">
+-          <h2 className="font-display text-xl font-semibold text-mist-100 mb-6">
++          <h2 className="font-display text-xl font-medium text-ink-950 mb-6">
+             Skills
+           </h2>
+           <div className="flex flex-wrap gap-2.5">
+@@ -70,7 +64,7 @@ const EduPages = () => {
+             ))}
+           </div>
+ 
+-          <div className="mt-8 pt-6 border-t border-white/[0.07] flex flex-wrap gap-2.5">
++          <div className="mt-8 pt-6 border-t border-paper-300 flex flex-wrap gap-2.5">
+             {softSkills.map((skill, i) => (
+               <span key={i} className="chip">
+                 {skill}
+@@ -81,19 +75,19 @@ const EduPages = () => {
+ 
+         {/* Achievements */}
+         <GlassCard className="p-8 md:p-10 md:col-span-3">
+-          <h2 className="font-display text-xl font-semibold text-mist-100 mb-6">
++          <h2 className="font-display text-xl font-medium text-ink-950 mb-6">
+             Achievements
+           </h2>
+-          <div className="divide-y divide-white/[0.06]">
++          <div className="divide-y divide-paper-200">
+             {achievements.map((a, i) => (
+               <div
+                 key={i}
+                 className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-8 py-5 first:pt-0 last:pb-0"
+               >
+-                <div className="font-mono text-sm font-medium text-accent-300 sm:w-28 flex-shrink-0">
++                <div className="font-display text-sm font-medium text-rose-500 sm:w-28 flex-shrink-0">
+                   {a.place}
+                 </div>
+-                <div className="text-sm text-mist-400">{a.detail}</div>
++                <div className="text-sm text-ink-600">{a.detail}</div>
+               </div>
+             ))}
+           </div>
+diff --git a/src/pages/HomePages.js b/src/pages/HomePages.js
+index 0ad6708..60c43f7 100644
+--- a/src/pages/HomePages.js
++++ b/src/pages/HomePages.js
+@@ -1,5 +1,5 @@
+-import React, { useEffect, useRef, useState } from "react";
+-import { motion, useReducedMotion } from "framer-motion";
++import React, { Suspense, useCallback, useEffect, useState } from "react";
++import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+ import ProfileCard from "../components/sections/ProfiileCard";
+ import AboutMe from "./AboutMe";
+ import ResumePages from "./ResumePages";
+@@ -7,187 +7,159 @@ import EduPages from "./EduPages";
+ import ContactPages from "./ContactPages";
+ import "../styles/global.css";
+ 
+-// Inline icons — no external asset files needed, keeps the dock self-contained.
++// Three.js + R3F + drei are heavy — loaded as their own chunk so they
++// never block the first paint. Body background is already paper-50
++// (see global.css), so there's no visible flash while this streams in.
++const Scene3D = React.lazy(() => import("../components/three/Scene3D"));
++
++const SECTIONS = {
++  about: { label: "About", Component: AboutMe },
++  resume: { label: "Resume & Projects", Component: ResumePages },
++  education: { label: "Education", Component: EduPages },
++  contact: { label: "Contact", Component: ContactPages },
++};
++
+ const icons = {
+-  home: (
+-    <path
+-      d="M4 12L12 5l8 7M6 10v9h12v-9"
+-      strokeWidth="1.8"
+-      strokeLinecap="round"
+-      strokeLinejoin="round"
+-    />
+-  ),
+-  about: (
+-    <path
+-      d="M12 12a4 4 0 100-8 4 4 0 000 8zM5 20a7 7 0 0114 0"
+-      strokeWidth="1.8"
+-      strokeLinecap="round"
+-      strokeLinejoin="round"
+-    />
+-  ),
+-  resume: (
+-    <path
+-      d="M7 3h7l4 4v14H7V3zm7 0v4h4M9 12h6M9 16h6"
+-      strokeWidth="1.8"
+-      strokeLinecap="round"
+-      strokeLinejoin="round"
+-    />
+-  ),
+-  edu: (
+-    <path
+-      d="M3 8l9-4 9 4-9 4-9-4zm5 3v5c0 1.5 2 3 4 3s4-1.5 4-3v-5"
+-      strokeWidth="1.8"
+-      strokeLinecap="round"
+-      strokeLinejoin="round"
+-    />
+-  ),
+-  contact: (
+-    <path
+-      d="M4 5h16v14H4V5zm0 0l8 7 8-7"
+-      strokeWidth="1.8"
+-      strokeLinecap="round"
+-      strokeLinejoin="round"
+-    />
+-  ),
++  home: <path d="M4 12L12 5l8 7M6 10v9h12v-9" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />,
++  about: <path d="M12 12a4 4 0 100-8 4 4 0 000 8zM5 20a7 7 0 0114 0" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />,
++  resume: <path d="M7 3h7l4 4v14H7V3zm7 0v4h4M9 12h6M9 16h6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />,
++  education: <path d="M3 8l9-4 9 4-9 4-9-4zm5 3v5c0 1.5 2 3 4 3s4-1.5 4-3v-5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />,
++  contact: <path d="M4 5h16v14H4V5zm0 0l8 7 8-7" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />,
+ };
+ 
+ const DockIcon = ({ name }) => (
+-  <svg
+-    viewBox="0 0 24 24"
+-    fill="none"
+-    stroke="currentColor"
+-    className="w-[18px] h-[18px]"
+-  >
++  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-[18px] h-[18px]">
+     {icons[name]}
+   </svg>
+ );
+ 
++const CloseIcon = () => (
++  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="w-5 h-5">
++    <path d="M6 6l12 12M18 6L6 18" />
++  </svg>
++);
++
+ const HomePages = () => {
+-  const homeRef = useRef(null);
+-  const aboutMeRef = useRef(null);
+-  const resumeRef = useRef(null);
+-  const eduRef = useRef(null);
+-  const contactRef = useRef(null);
+-  const [active, setActive] = useState("Home");
++  const [activeSection, setActiveSection] = useState(null);
++  const [resetSignal, setResetSignal] = useState(0);
+   const reduceMotion = useReducedMotion();
+ 
+-  const navItems = [
+-    { ref: homeRef, icon: "home", label: "Home" },
+-    { ref: aboutMeRef, icon: "about", label: "About" },
+-    { ref: resumeRef, icon: "resume", label: "Resume" },
+-    { ref: eduRef, icon: "edu", label: "Education" },
+-    { ref: contactRef, icon: "contact", label: "Contact" },
+-  ];
++  const openSection = useCallback((key) => {
++    if (SECTIONS[key]) setActiveSection(key);
++  }, []);
+ 
+-  const scrollToSection = (ref) => {
+-    ref.current?.scrollIntoView({
+-      behavior: reduceMotion ? "auto" : "smooth",
+-      block: "start",
+-    });
+-  };
++  const closeSection = useCallback(() => {
++    setActiveSection(null);
++    setResetSignal((n) => n + 1);
++  }, []);
+ 
+-  // Scroll-spy: highlight the dock item for the section in view.
++  // Esc closes whatever panel is open.
+   useEffect(() => {
+-    const observer = new IntersectionObserver(
+-      (entries) => {
+-        entries.forEach((entry) => {
+-          if (entry.isIntersecting) {
+-            const item = navItems.find((n) => n.ref.current === entry.target);
+-            if (item) setActive(item.label);
+-          }
+-        });
+-      },
+-      { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
+-    );
+-    navItems.forEach((item) => {
+-      if (item.ref.current) observer.observe(item.ref.current);
+-    });
+-    return () => observer.disconnect();
+-    // eslint-disable-next-line react-hooks/exhaustive-deps
+-  }, []);
++    if (!activeSection) return undefined;
++    const onKey = (e) => {
++      if (e.key === "Escape") closeSection();
++    };
++    window.addEventListener("keydown", onKey);
++    return () => window.removeEventListener("keydown", onKey);
++  }, [activeSection, closeSection]);
++
++  const navItems = [
++    { key: "home", icon: "home", label: "Home" },
++    { key: "about", icon: "about", label: "About" },
++    { key: "resume", icon: "resume", label: "Resume" },
++    { key: "education", icon: "education", label: "Education" },
++    { key: "contact", icon: "contact", label: "Contact" },
++  ];
++
++  const ActivePanel = activeSection ? SECTIONS[activeSection].Component : null;
+ 
+   return (
+-    <div className="relative min-h-screen bg-ink-950 text-mist-200 font-sans selection:bg-accent-400/25 pb-40 overflow-x-clip">
+-      {/* Background: faint engineering grid + restrained ambient glows */}
+-      <div
+-        className="pointer-events-none fixed inset-0 z-0 bg-dots"
+-        style={{
+-          maskImage:
+-            "radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%)",
+-          WebkitMaskImage:
+-            "radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%)",
+-        }}
+-      />
+-      <div
+-        className="pointer-events-none fixed inset-0 z-0"
+-        style={{
+-          background:
+-            "radial-gradient(720px circle at 12% -5%, rgba(52,211,153,0.07), transparent 45%), radial-gradient(640px circle at 88% 12%, rgba(255,255,255,0.05), transparent 45%), radial-gradient(900px circle at 50% 110%, rgba(52,211,153,0.04), transparent 50%)",
+-        }}
+-      />
++    <div className="app-shell bg-paper-50 text-ink-800 font-sans selection:bg-rose-400/20">
++      {/* The 3D world fills the viewport and is the primary interface. */}
++      <Suspense fallback={null}>
++        <Scene3D activeSection={activeSection} onEnterPortal={openSection} resetSignal={resetSignal} />
++      </Suspense>
+ 
+-      <motion.div
+-        initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+-        animate={{ opacity: 1, y: 0 }}
+-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+-        className="relative z-10 pt-24 md:pt-36 px-5 sm:px-8 md:px-12 max-w-container mx-auto"
+-        ref={homeRef}
+-      >
+-        <ProfileCard onContact={() => scrollToSection(contactRef)} />
+-      </motion.div>
++      {/* HUD — identity card, top-left, over the world. */}
++      <div className="absolute top-5 left-5 md:top-8 md:left-8 z-20">
++        <ProfileCard onContact={() => openSection("contact")} />
++      </div>
+ 
+-      <div className="relative z-10 px-5 sm:px-8 md:px-12 max-w-container mx-auto mt-24 space-y-24 md:mt-32 md:space-y-36">
+-        <div ref={aboutMeRef} className="scroll-mt-24 md:scroll-mt-28">
+-          <AboutMe />
++      {/* Drive hint — hidden once a panel is open. */}
++      {!activeSection && (
++        <div className="absolute top-5 right-5 md:top-8 md:right-8 z-20 hidden sm:block bg-paper-50/90 backdrop-blur border border-paper-300 rounded-full px-4 py-2 text-xs text-ink-500">
++          WASD / panah untuk berkendara, dekati objek untuk membuka
+         </div>
+-        <div ref={resumeRef} className="scroll-mt-24 md:scroll-mt-28">
+-          <ResumePages />
+-        </div>
+-        <div ref={eduRef} className="scroll-mt-24 md:scroll-mt-28">
+-          <EduPages />
+-        </div>
+-        <div ref={contactRef} className="scroll-mt-24 md:scroll-mt-28">
+-          <ContactPages />
+-        </div>
+-      </div>
++      )}
+ 
+-      {/* Floating dock navigation, with labels on hover and active-section state */}
+-      {/* Centering uses framer-motion `x` so the entrance animation doesn't
+-          override the horizontal offset (Tailwind -translate-x-1/2 would be
+-          replaced by motion's inline transform and push the dock right). */}
++      {/* Floating dock — direct shortcut into any section, same role
++          the scroll-nav used to play, now restyled and re-wired to
++          open a panel instead of scrolling. */}
+       <motion.div
+         initial={reduceMotion ? false : { x: "-50%", y: 80, opacity: 0 }}
+         animate={{ x: "-50%", y: 0, opacity: 1 }}
+-        transition={{ delay: 0.6, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+-        className="fixed bottom-4 sm:bottom-7 left-1/2 z-50"
++        transition={{ delay: 0.4, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
++        className="fixed bottom-4 sm:bottom-7 left-1/2 z-20"
+       >
+-        <nav className="flex items-center gap-0.5 p-1 sm:p-1.5 rounded-2xl bg-ink-900/85 border border-white/[0.08] backdrop-blur-xl shadow-[0_20px_50px_-16px_rgba(0,0,0,0.85)]">
++        <nav className="flex items-center gap-0.5 p-1 sm:p-1.5 rounded-2xl bg-paper-50/95 border border-paper-300 backdrop-blur-xl shadow-[0_20px_50px_-24px_rgba(26,22,32,0.4)]">
+           {navItems.map((item) => {
+-            const isActive = active === item.label;
++            const isActive = item.key === "home" ? !activeSection : activeSection === item.key;
+             return (
+-              <div key={item.label} className="relative group">
+-                <span className="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2 hidden sm:block opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[11px] font-mono text-mist-200 whitespace-nowrap bg-ink-800 border border-white/[0.08] rounded-lg px-2.5 py-1 shadow-lg">
++              <div key={item.key} className="relative group">
++                <span className="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2 hidden sm:block opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-xs text-paper-50 whitespace-nowrap bg-ink-950 rounded-lg px-2.5 py-1">
+                   {item.label}
+                 </span>
+                 <button
+-                  onClick={() => scrollToSection(item.ref)}
++                  onClick={() => (item.key === "home" ? closeSection() : openSection(item.key))}
+                   aria-label={item.label}
+-                  className={`relative p-2 sm:p-2.5 rounded-xl text-mist-500 transition-all duration-200 ${
+-                    isActive
+-                      ? "text-white bg-white/[0.08]"
+-                      : "hover:text-white hover:bg-white/[0.05]"
++                  className={`relative p-2 sm:p-2.5 rounded-xl transition-all duration-200 ${
++                    isActive ? "text-rose-500 bg-rose-500/10" : "text-ink-500 hover:text-ink-950 hover:bg-ink-950/[0.05]"
+                   }`}
+                 >
+                   <DockIcon name={item.icon} />
+-                  {isActive && (
+-                    <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-accent-400" />
+-                  )}
+                 </button>
+               </div>
+             );
+           })}
+         </nav>
+       </motion.div>
++
++      {/* Content panel — opened by driving into a portal or by the
++          dock. One deliberate open/close motion; nothing inside it
++          re-animates on its own. */}
++      <AnimatePresence>
++        {activeSection && (
++          <motion.div
++            initial={reduceMotion ? false : { opacity: 0 }}
++            animate={{ opacity: 1 }}
++            exit={reduceMotion ? {} : { opacity: 0 }}
++            transition={{ duration: 0.2 }}
++            className="absolute inset-0 z-30 bg-ink-950/30 flex items-end sm:items-center justify-center p-0 sm:p-6"
++            onClick={(e) => {
++              if (e.target === e.currentTarget) closeSection();
++            }}
++          >
++            <motion.div
++              initial={reduceMotion ? false : { opacity: 0, y: 28, scale: 0.98 }}
++              animate={{ opacity: 1, y: 0, scale: 1 }}
++              exit={reduceMotion ? {} : { opacity: 0, y: 16, scale: 0.98 }}
++              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
++              className="relative bg-paper-50 w-full sm:max-w-3xl max-h-[92vh] sm:max-h-[85vh] rounded-t-2xl sm:rounded-2xl overflow-y-auto shadow-[0_40px_80px_-24px_rgba(26,22,32,0.45)]"
++            >
++              <button
++                onClick={closeSection}
++                aria-label="Tutup"
++                className="sticky top-4 float-right mr-4 z-10 p-2 rounded-full bg-paper-100 border border-paper-300 text-ink-600 hover:text-ink-950 hover:border-ink-950/[0.2]"
++              >
++                <CloseIcon />
++              </button>
++              <div className="px-6 py-8 sm:px-10 sm:py-12 clear-both">
++                {ActivePanel && <ActivePanel />}
++              </div>
++            </motion.div>
++          </motion.div>
++        )}
++      </AnimatePresence>
+     </div>
+   );
+ };
+diff --git a/src/pages/ResumePages.js b/src/pages/ResumePages.js
+index 5474076..ab2e521 100644
+--- a/src/pages/ResumePages.js
++++ b/src/pages/ResumePages.js
+@@ -38,7 +38,7 @@ const ResumePages = () => {
+ 
+       {/* Projects — screenshot showcase, above Experience */}
+       <div className="mb-16 md:mb-20">
+-        <h2 className="font-display text-xl font-semibold text-mist-100 mb-6">
++        <h2 className="font-display text-xl font-medium text-ink-950 mb-6">
+           Projects
+         </h2>
+         <div className="space-y-4 lg:space-y-5">
+@@ -50,21 +50,22 @@ const ResumePages = () => {
+ 
+       {/* Experience */}
+       <div>
+-        <h2 className="font-display text-xl font-semibold text-mist-100 mb-6">
++        <h2 className="font-display text-xl font-medium text-ink-950 mb-6">
+           Experience
+         </h2>
+         <GlassCard className="p-8 md:p-10">
+-          <div className="relative border-l border-white/[0.08] space-y-8 max-w-2xl">
++          <div className="relative border-l border-paper-300 space-y-8 max-w-2xl">
+             {experience.map((item, i) => (
+               <div key={i} className="relative pl-7">
+-                <span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-accent-400/90 ring-4 ring-accent-400/10" />
+-                <h3 className="text-[15.5px] font-semibold text-mist-100">
++                <span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-rose-500 ring-4 ring-rose-500/10" />
++                <h3 className="text-[15.5px] font-semibold text-ink-950">
+                   {item.role}
+                 </h3>
+-                <p className="font-mono text-xs text-mist-500 mt-1 mb-2.5">
+-                  {item.org} • {item.period}
+-                </p>
+-                <p className="text-sm text-mist-400 leading-relaxed">
++                <div className="flex flex-wrap items-baseline gap-x-2.5 mt-1 mb-2.5">
++                  <span className="text-sm text-ink-800">{item.org}</span>
++                  <span className="text-xs text-ink-500">{item.period}</span>
++                </div>
++                <p className="text-sm text-ink-600 leading-relaxed">
+                   {item.desc}
+                 </p>
+               </div>
+diff --git a/src/styles/global.css b/src/styles/global.css
+index 228ba27..802268d 100644
+--- a/src/styles/global.css
++++ b/src/styles/global.css
+@@ -1,40 +1,41 @@
+ /* ==========================================================================
+-   Portfolio design system — premium AI developer aesthetic
+-   Inspired by Nexflow's editorial dark SaaS language: near-black base,
+-   strong type hierarchy, hairline borders, restrained single accent.
++   Portfolio design system — white primary, rose secondary.
++   Fraunces carries the display moments; IBM Plex Sans runs everything
++   else. Surfaces stay quiet and flat; the 3D world is the one bold
++   element on the page, so nothing here competes with it.
+    ========================================================================== */
+ 
+ :root {
+-  --ink-950: #0a0b0e;
+-  --ink-900: #101218;
+-  --ink-850: #14161d;
+-  --ink-800: #1a1d26;
++  --paper-50: #ffffff;
++  --paper-100: #f8f4f5;
++  --paper-200: #efe6e9;
++  --paper-300: #e3d5da;
+ 
+-  --mist-100: #f4f6f8;
+-  --mist-200: #e4e7ec;
+-  --mist-300: #c6cbd4;
+-  --mist-400: #9aa1ad;
+-  --mist-500: #7c8491;
+-  --mist-600: #5b6270;
++  --ink-950: #1a1620;
++  --ink-800: #3a3340;
++  --ink-600: #6e6774;
++  --ink-500: #8b8490;
++  --ink-400: #a79fac;
+ 
+-  --accent-300: #6ee7b7;
+-  --accent-400: #34d399;
+-  --accent-500: #10b981;
++  --rose-300: #f2a6c4;
++  --rose-400: #e85d9a;
++  --rose-500: #d6336c;
++  --rose-600: #a32357;
+ 
+-  --border-subtle: rgba(255, 255, 255, 0.07);
+-  --border-strong: rgba(255, 255, 255, 0.14);
++  --border-subtle: rgba(26, 22, 32, 0.09);
++  --border-strong: rgba(26, 22, 32, 0.16);
+ }
+ 
+ html {
+   scroll-behavior: smooth;
+-  scroll-padding-block-start: 5.5rem;
+ }
+ 
+ body {
+   margin: 0;
+-  background-color: var(--ink-950);
+-  color: var(--mist-200);
+-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
++  background-color: var(--paper-50);
++  color: var(--ink-800);
++  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto,
++    sans-serif;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+   text-rendering: optimizeLegibility;
+@@ -42,16 +43,16 @@ body {
+ }
+ 
+ ::selection {
+-  background: rgba(52, 211, 153, 0.25);
+-  color: var(--mist-100);
++  background: rgba(214, 51, 108, 0.18);
++  color: var(--ink-950);
+ }
+ 
+ :focus-visible {
+-  outline: 2px solid rgba(52, 211, 153, 0.55);
++  outline: 2px solid var(--rose-500);
+   outline-offset: 2px;
+ }
+ 
+-/* Quiet technical scrollbar */
++/* Quiet scrollbar */
+ ::-webkit-scrollbar {
+   width: 10px;
+   height: 10px;
+@@ -60,126 +61,93 @@ body {
+   background: transparent;
+ }
+ ::-webkit-scrollbar-thumb {
+-  background: #23262e;
++  background: var(--paper-300);
+   border-radius: 8px;
+-  border: 2px solid var(--ink-950);
++  border: 2px solid var(--paper-50);
+ }
+ ::-webkit-scrollbar-thumb:hover {
+-  background: #2e323c;
++  background: var(--rose-300);
+ }
+ 
+-/* Mono eyebrow label — tracked-out, uppercase */
+-.eyebrow {
+-  font-family: "JetBrains Mono", ui-monospace, monospace;
+-  font-size: 0.6875rem;
++/* Small section label — a plain, sentence-case identifier, not a
++   tracked-out uppercase eyebrow. It names the content; it doesn't
++   decorate it. */
++.section-label {
++  font-family: "Fraunces", Georgia, serif;
++  font-style: italic;
+   font-weight: 500;
+-  letter-spacing: 0.22em;
+-  text-transform: uppercase;
+-  color: var(--mist-500);
++  font-size: 1rem;
++  color: var(--rose-500);
+ }
+ 
+-/* Panel surface — hairline border, top-edge highlight, soft glass */
++/* Panel — a flat surface with a hairline border. No glass gradient,
++   no mouse-tracked spotlight, no hover-tilt: the 3D world already
++   carries the depth/motion budget for this page. */
+ .panel {
+   position: relative;
+   border: 1px solid var(--border-subtle);
+-  border-radius: 1.25rem;
+-  background: linear-gradient(
+-    180deg,
+-    rgba(255, 255, 255, 0.035) 0%,
+-    rgba(255, 255, 255, 0.012) 100%
+-  );
+-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+-  will-change: transform;
+-}
+-.panel::before {
+-  content: "";
+-  position: absolute;
+-  inset: 0;
+-  border-radius: inherit;
+-  padding: 1px;
+-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), transparent 38%);
+-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+-  -webkit-mask-composite: xor;
+-  mask-composite: exclude;
+-  pointer-events: none;
+-}
+-.panel:hover {
+-  border-color: var(--border-strong);
+-  box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.85);
++  border-radius: 0.875rem;
++  background: var(--paper-50);
+ }
+ 
+-/* Buttons — editorial, quiet */
++/* Buttons — one clear primary action, one quiet alternative. No arrow
++   glyph appended by default; motion answers the click, not a hover. */
+ .btn {
+   display: inline-flex;
+   align-items: center;
+   gap: 0.5rem;
+-  font-size: 0.8125rem;
++  font-size: 0.875rem;
+   font-weight: 600;
+   line-height: 1;
+-  padding: 0.75rem 1.125rem;
++  padding: 0.8rem 1.25rem;
+   border-radius: 0.625rem;
+   text-decoration: none;
+   cursor: pointer;
+   white-space: nowrap;
+-  transition: transform 0.25s ease, background-color 0.25s ease,
+-    border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
++  transition: transform 0.15s ease, background-color 0.15s ease,
++    border-color 0.15s ease, color 0.15s ease;
+ }
+-.btn .arrow {
+-  display: inline-block;
+-  transition: transform 0.25s ease;
+-}
+-.btn:hover .arrow {
+-  transform: translateX(3px);
++.btn:active {
++  transform: scale(0.97);
+ }
+ 
+ .btn-primary {
+-  background: #ffffff;
+-  color: var(--ink-950);
++  background: var(--ink-950);
++  color: var(--paper-50);
+ }
+ .btn-primary:hover {
+-  transform: translateY(-1px);
+-  box-shadow: 0 12px 28px -10px rgba(255, 255, 255, 0.28);
++  background: var(--rose-500);
+ }
+ 
+ .btn-ghost {
+-  border: 1px solid rgba(255, 255, 255, 0.1);
+-  background: rgba(255, 255, 255, 0.02);
+-  color: var(--mist-200);
++  border: 1px solid var(--border-strong);
++  background: transparent;
++  color: var(--ink-800);
+ }
+ .btn-ghost:hover {
+-  transform: translateY(-1px);
+-  background: rgba(255, 255, 255, 0.06);
+-  border-color: rgba(255, 255, 255, 0.18);
++  border-color: var(--rose-500);
++  color: var(--rose-500);
+ }
+ 
+-/* Skill chips — mono, technical */
++/* Skill chips — plain, sans, no monospace-for-labels default. */
+ .chip {
+   display: inline-flex;
+   align-items: center;
+-  font-family: "JetBrains Mono", ui-monospace, monospace;
+   font-size: 0.8125rem;
+-  color: var(--mist-300);
++  font-weight: 500;
++  color: var(--ink-800);
+   padding: 0.5rem 0.9rem;
+   border-radius: 9999px;
+-  border: 1px solid rgba(255, 255, 255, 0.08);
+-  background: rgba(255, 255, 255, 0.03);
++  border: 1px solid var(--border-subtle);
++  background: var(--paper-100);
+   cursor: default;
+   user-select: none;
+-  transition: border-color 0.25s ease, background-color 0.25s ease,
+-    transform 0.25s ease, color 0.25s ease;
++  transition: border-color 0.2s ease, background-color 0.2s ease;
+ }
+ .chip:hover {
+-  border-color: rgba(52, 211, 153, 0.45);
+-  background: rgba(52, 211, 153, 0.06);
+-  color: var(--mist-100);
+-  transform: translateY(-1px);
+-}
+-
+-/* Background texture — faint engineering grid */
+-.bg-dots {
+-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+-  background-size: 28px 28px;
++  border-color: var(--rose-400);
++  background: var(--rose-300);
++  background: rgba(214, 51, 108, 0.08);
+ }
+ 
+ /* Hide scrollbars on carousel tracks while keeping them scrollable */
+@@ -191,6 +159,14 @@ body {
+   display: none;
+ }
+ 
++/* The 3D world owns the viewport — the app doesn't scroll as a page.
++   Individual panels (About, Resume, etc.) scroll internally instead. */
++.app-shell {
++  position: fixed;
++  inset: 0;
++  overflow: hidden;
++}
++
+ /* Respect reduced-motion preferences */
+ @media (prefers-reduced-motion: reduce) {
+   html {
+diff --git a/tailwind.config.js b/tailwind.config.js
+index 5f7197a..4c9147a 100644
+--- a/tailwind.config.js
++++ b/tailwind.config.js
+@@ -4,46 +4,47 @@ module.exports = {
+   theme: {
+     extend: {
+       colors: {
+-        ink: {
+-          950: "#0A0B0E",
+-          900: "#101218",
+-          850: "#14161D",
+-          800: "#1A1D26",
++        // Backgrounds — white primary, near-white for raised surfaces.
++        paper: {
++          DEFAULT: "#FFFFFF",
++          50: "#FFFFFF",
++          100: "#F8F4F5",
++          200: "#EFE6E9",
++          300: "#E3D5DA",
+         },
+-        mist: {
+-          100: "#F4F6F8",
+-          200: "#E4E7EC",
+-          300: "#C6CBD4",
+-          400: "#9AA1AD",
+-          500: "#7C8491",
+-          600: "#5B6270",
++        // Foreground/text — near-black with a whisper of the accent hue.
++        ink: {
++          950: "#1A1620",
++          800: "#3A3340",
++          600: "#6E6774",
++          500: "#8B8490",
++          400: "#A79FAC",
+         },
+-        accent: {
+-          DEFAULT: "#34D399",
+-          300: "#6EE7B7",
+-          400: "#34D399",
+-          500: "#10B981",
++        // Secondary accent — a grown-up rose/magenta, used sparingly.
++        rose: {
++          DEFAULT: "#D6336C",
++          300: "#F2A6C4",
++          400: "#E85D9A",
++          500: "#D6336C",
++          600: "#A32357",
+         },
+       },
+       fontFamily: {
+-        sans: ['"Inter"', "system-ui", "-apple-system", "sans-serif"],
+-        display: ['"Space Grotesk"', '"Inter"', "system-ui", "sans-serif"],
+-        mono: [
+-          '"JetBrains Mono"',
+-          "ui-monospace",
+-          "SFMono-Regular",
+-          "Menlo",
+-          "monospace",
+-        ],
++        // Display: carries personality — used for names, big moments.
++        display: ['"Fraunces"', "Georgia", "serif"],
++        // Body/UI: precise, technical, sets everything else.
++        sans: ['"IBM Plex Sans"', "system-ui", "-apple-system", "sans-serif"],
++        // Used narrowly (tech labels, the code badge) — not for eyebrows.
++        mono: ['"IBM Plex Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
+       },
+       letterSpacing: {
+-        tightest: "-0.045em",
++        tightest: "-0.03em",
+       },
+       maxWidth: {
+         container: "72rem",
+       },
+       borderRadius: {
+-        panel: "1.25rem",
++        panel: "0.875rem",
+       },
+     },
+   },
+diff --git a/vercel.json b/vercel.json
+new file mode 100644
+index 0000000..0f32683
+--- /dev/null
++++ b/vercel.json
+@@ -0,0 +1,3 @@
++{
++  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
++}

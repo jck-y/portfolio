@@ -38,7 +38,7 @@ const ResumePages = () => {
 
       {/* Projects — screenshot showcase, above Experience */}
       <div className="mb-16 md:mb-20">
-        <h2 className="font-display text-xl font-semibold text-mist-100 mb-6">
+        <h2 className="font-display text-xl font-medium text-ink-950 mb-6">
           Projects
         </h2>
         <div className="space-y-4 lg:space-y-5">
@@ -50,21 +50,22 @@ const ResumePages = () => {
 
       {/* Experience */}
       <div>
-        <h2 className="font-display text-xl font-semibold text-mist-100 mb-6">
+        <h2 className="font-display text-xl font-medium text-ink-950 mb-6">
           Experience
         </h2>
         <GlassCard className="p-8 md:p-10">
-          <div className="relative border-l border-white/[0.08] space-y-8 max-w-2xl">
+          <div className="relative border-l border-paper-300 space-y-8 max-w-2xl">
             {experience.map((item, i) => (
               <div key={i} className="relative pl-7">
-                <span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-accent-400/90 ring-4 ring-accent-400/10" />
-                <h3 className="text-[15.5px] font-semibold text-mist-100">
+                <span className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-rose-500 ring-4 ring-rose-500/10" />
+                <h3 className="text-[15.5px] font-semibold text-ink-950">
                   {item.role}
                 </h3>
-                <p className="font-mono text-xs text-mist-500 mt-1 mb-2.5">
-                  {item.org} • {item.period}
-                </p>
-                <p className="text-sm text-mist-400 leading-relaxed">
+                <div className="flex flex-wrap items-baseline gap-x-2.5 mt-1 mb-2.5">
+                  <span className="text-sm text-ink-800">{item.org}</span>
+                  <span className="text-xs text-ink-500">{item.period}</span>
+                </div>
+                <p className="text-sm text-ink-600 leading-relaxed">
                   {item.desc}
                 </p>
               </div>

@@ -1,16 +1,12 @@
 import React from "react";
 
 /**
- * Section header eyebrow — mono, tracked-out, with a short accent rule.
- * Keeps the editorial label treatment consistent across every section.
+ * Names the section. Sentence case, no letter-spacing/uppercase
+ * treatment, no decorative rule — just a small serif identifier in the
+ * accent color.
  */
 const SectionLabel = ({ children }) => {
-  return (
-    <div className="flex items-center gap-3 mb-8">
-      <span className="w-8 h-px bg-accent-400/70" />
-      <span className="eyebrow">{children}</span>
-    </div>
-  );
+  return <div className="section-label mb-5">{children}</div>;
 };
 
 export default SectionLabel;

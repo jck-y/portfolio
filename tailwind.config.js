@@ -4,46 +4,47 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Backgrounds — white primary, near-white for raised surfaces.
+        paper: {
+          DEFAULT: "#FFFFFF",
+          50: "#FFFFFF",
+          100: "#F8F4F5",
+          200: "#EFE6E9",
+          300: "#E3D5DA",
+        },
+        // Foreground/text — near-black with a whisper of the accent hue.
         ink: {
-          950: "#0A0B0E",
-          900: "#101218",
-          850: "#14161D",
-          800: "#1A1D26",
+          950: "#1A1620",
+          800: "#3A3340",
+          600: "#6E6774",
+          500: "#8B8490",
+          400: "#A79FAC",
         },
-        mist: {
-          100: "#F4F6F8",
-          200: "#E4E7EC",
-          300: "#C6CBD4",
-          400: "#9AA1AD",
-          500: "#7C8491",
-          600: "#5B6270",
-        },
-        accent: {
-          DEFAULT: "#34D399",
-          300: "#6EE7B7",
-          400: "#34D399",
-          500: "#10B981",
+        // Secondary accent — a grown-up rose/magenta, used sparingly.
+        rose: {
+          DEFAULT: "#D6336C",
+          300: "#F2A6C4",
+          400: "#E85D9A",
+          500: "#D6336C",
+          600: "#A32357",
         },
       },
       fontFamily: {
-        sans: ['"Inter"', "system-ui", "-apple-system", "sans-serif"],
-        display: ['"Space Grotesk"', '"Inter"', "system-ui", "sans-serif"],
-        mono: [
-          '"JetBrains Mono"',
-          "ui-monospace",
-          "SFMono-Regular",
-          "Menlo",
-          "monospace",
-        ],
+        // Display: carries personality — used for names, big moments.
+        display: ['"Fraunces"', "Georgia", "serif"],
+        // Body/UI: precise, technical, sets everything else.
+        sans: ['"IBM Plex Sans"', "system-ui", "-apple-system", "sans-serif"],
+        // Used narrowly (tech labels, the code badge) — not for eyebrows.
+        mono: ['"IBM Plex Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
       },
       letterSpacing: {
-        tightest: "-0.045em",
+        tightest: "-0.03em",
       },
       maxWidth: {
         container: "72rem",
       },
       borderRadius: {
-        panel: "1.25rem",
+        panel: "0.875rem",
       },
     },
   },

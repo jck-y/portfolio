@@ -23,10 +23,10 @@ const ContactPages = () => {
       <SectionLabel>Contact</SectionLabel>
 
       <GlassCard className="px-6 py-16 md:px-12 md:py-24 text-center">
-        <h2 className="font-display text-3xl md:text-5xl font-semibold text-mist-100 tracking-tightest mb-4">
+        <h2 className="font-display text-3xl md:text-5xl font-medium text-ink-950 mb-4">
           Let's build something.
         </h2>
-        <p className="text-mist-400 max-w-md mx-auto mb-10 leading-relaxed">
+        <p className="text-ink-600 max-w-md mx-auto mb-10 leading-relaxed">
           Open for work and collaborations. Reach out on any channel below.
         </p>
 
