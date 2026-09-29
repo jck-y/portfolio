@@ -18,7 +18,7 @@ const ProfileCard = ({ onContact }) => {
         <div className="relative flex-shrink-0">
           <div className="w-14 h-14 md:w-16 md:h-16 rounded-panel overflow-hidden ring-1 ring-paper-300">
             <img
-              src="/images.jpg"
+              src="/images.webp"
               alt="Profile"
               className="w-full h-full object-cover"
             />
