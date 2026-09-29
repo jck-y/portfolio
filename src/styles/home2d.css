@@ -1,0 +1,1443 @@
+.home2d {
+  position: relative;
+
+  min-height: 100vh;
+
+  color: var(--ink-800);
+
+  font-family:
+    "IBM Plex Sans",
+    system-ui,
+    sans-serif;
+}
+
+.home2d * {
+  box-sizing: border-box;
+}
+
+.home2d-page {
+  width: min(
+    calc(100% - 32px),
+    1000px
+  );
+
+  margin: 0 auto;
+
+  padding:
+    34px 0 70px;
+
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================================================
+   PROFILE / BANNER
+   ========================================================= */
+
+.two-d-profile {
+  position: relative;
+
+  background:
+    rgba(255,255,255,.93);
+
+  border:
+    1px solid rgba(35, 28, 35, .13);
+
+  box-shadow:
+    0 25px 70px
+    rgba(26,22,32,.08);
+
+  overflow: hidden;
+
+  backdrop-filter:
+    blur(4px);
+
+  -webkit-backdrop-filter:
+    blur(4px);
+}
+.two-d-banner-wrap {
+  height: 245px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.two-d-banner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 60% 45%,
+      rgba(214, 51, 108, 0.2),
+      transparent 35%
+    ),
+    #171219;
+}
+
+.two-d-banner-image {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  filter:
+    grayscale(0.65)
+    contrast(1.05)
+    brightness(0.6);
+
+  opacity: 0.72;
+}
+
+.two-d-banner-canvas {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  z-index: 2;
+}
+
+.two-d-banner-scanlines {
+  position: absolute;
+  inset: 0;
+
+  z-index: 3;
+
+  pointer-events: none;
+
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(255,255,255,0.05) 3px
+    );
+
+  mix-blend-mode: screen;
+
+  opacity: 0.45;
+}
+
+.two-d-banner-noise {
+  position: absolute;
+  inset: 0;
+
+  z-index: 4;
+
+  pointer-events: none;
+
+  opacity: 0.12;
+
+  background-image:
+    radial-gradient(
+      rgba(255,255,255,0.7) 0.5px,
+      transparent 0.5px
+    );
+
+  background-size: 4px 4px;
+
+  mix-blend-mode: screen;
+}
+
+.two-d-profile-body {
+  position: relative;
+
+  padding: 0 26px 25px;
+}
+
+.two-d-profile-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.two-d-avatar-wrap {
+  position: relative;
+
+  width: 116px;
+  height: 116px;
+
+  margin-top: -58px;
+
+  padding: 5px;
+
+  background: var(--paper-50);
+
+  border: 1px solid var(--border-strong);
+
+  z-index: 5;
+}
+
+.two-d-avatar {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.two-d-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 9px;
+
+  padding: 7px 11px;
+
+  border: 1px solid var(--border-subtle);
+
+  border-radius: 999px;
+
+  background: var(--paper-100);
+
+  color: var(--ink-600);
+
+  font-size: 11px;
+}
+
+.two-d-status span {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: var(--rose-500);
+
+  box-shadow:
+    0 0 0 4px
+    rgba(214,51,108,0.10);
+}
+
+.two-d-name-row {
+  margin-top: 15px;
+}
+
+.two-d-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-family:
+    "Fraunces",
+    Georgia,
+    serif;
+
+  font-size: 26px;
+  line-height: 1.05;
+
+  letter-spacing: -0.035em;
+
+  color: var(--ink-950);
+}
+
+.two-d-pink-dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: var(--rose-500);
+}
+
+.two-d-username {
+  margin-top: 4px;
+
+  font-size: 13px;
+
+  color: var(--ink-500);
+}
+
+.two-d-bio {
+  max-width: 680px;
+
+  margin: 16px 0 0;
+
+  font-size: 14px;
+  line-height: 1.75;
+
+  color: var(--ink-800);
+}
+
+.two-d-meta {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 8px 18px;
+
+  margin-top: 15px;
+
+  color: var(--ink-500);
+
+  font-size: 12px;
+}
+
+.two-d-meta span::before {
+  content: "•";
+
+  margin-right: 7px;
+
+  color: var(--rose-500);
+}
+
+.two-d-socials {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  margin-top: 19px;
+
+  padding-top: 15px;
+
+  border-top:
+    1px solid var(--border-subtle);
+}
+
+.two-d-social {
+  padding: 8px 12px;
+
+  border:
+    1px solid var(--border-subtle);
+
+  background: var(--paper-50);
+
+  color: var(--ink-600);
+
+  text-decoration: none;
+
+  font-size: 11px;
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    color .2s ease,
+    background .2s ease;
+}
+
+.two-d-social:hover {
+  transform: translateY(-2px);
+
+  border-color:
+    rgba(214,51,108,.4);
+
+  color: var(--rose-500);
+
+  background:
+    rgba(214,51,108,.04);
+}
+
+/* =========================================================
+   NAV
+   ========================================================= */
+
+.two-d-nav {
+  position: sticky;
+  top: 12px;
+
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  width: fit-content;
+
+  margin: 12px auto 0;
+
+  padding: 4px;
+
+  background:
+    rgba(255,255,255,.94);
+
+  border:
+    1px solid var(--border-strong);
+
+  box-shadow:
+    0 15px 35px
+      rgba(26,22,32,.08);
+
+  backdrop-filter: blur(16px);
+}
+
+.two-d-nav a {
+  padding: 9px 13px;
+
+  color: var(--ink-500);
+
+  text-decoration: none;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  transition:
+    color .18s ease,
+    background .18s ease;
+}
+
+.two-d-nav a:hover {
+  color: var(--rose-500);
+
+  background:
+    rgba(214,51,108,.06);
+}
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.two-d-section {
+  position: relative;
+
+  margin-top: 13px;
+
+  background:
+    rgba(255,255,255,.90);
+
+  border:
+    1px solid rgba(35, 28, 35, .12);
+
+  backdrop-filter:
+    blur(3px);
+
+  -webkit-backdrop-filter:
+    blur(3px);
+}
+
+.two-d-section-inner {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    150px
+    minmax(0, 1fr);
+}
+
+.two-d-section-main {
+  min-width: 0;
+
+  padding:
+    42px 30px 46px;
+
+  border-left:
+    1px solid var(--border-subtle);
+}
+
+.two-d-section-heading {
+  display: grid;
+
+  grid-template-columns: 40px 1fr;
+
+  gap: 10px;
+
+  padding-bottom: 27px;
+
+  border-bottom:
+    1px solid var(--border-subtle);
+}
+
+.two-d-section-number {
+  padding-top: 4px;
+
+  color: var(--rose-500);
+
+  font-family:
+    "IBM Plex Mono",
+    monospace;
+
+  font-size: 10px;
+}
+
+.two-d-eyebrow {
+  display: block;
+
+  color: var(--rose-500);
+
+  font-family:
+    "IBM Plex Mono",
+    monospace;
+
+  font-size: 9px;
+
+  letter-spacing: .12em;
+
+  text-transform: uppercase;
+}
+
+.two-d-section-heading h2 {
+  margin: 7px 0 0;
+
+  font-family:
+    "Fraunces",
+    Georgia,
+    serif;
+
+  font-size: 31px;
+
+  line-height: 1;
+
+  letter-spacing: -.045em;
+
+  font-weight: 500;
+
+  color: var(--ink-950);
+}
+
+.two-d-annotation {
+  align-self: start;
+
+  padding:
+    43px 22px;
+
+  color: var(--ink-500);
+}
+
+.two-d-annotation span {
+  display: block;
+
+  margin-bottom: 12px;
+
+  color: var(--rose-400);
+
+  font-family:
+    "IBM Plex Mono",
+    monospace;
+
+  font-size: 9px;
+}
+
+.two-d-annotation p {
+  margin: 0;
+
+  font-family:
+    "Fraunces",
+    Georgia,
+    serif;
+
+  font-size: 13px;
+
+  font-style: italic;
+
+  line-height: 1.55;
+}
+
+/* =========================================================
+   ABOUT
+   ========================================================= */
+
+.two-d-about {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    170px;
+
+  gap: 40px;
+
+  padding-top: 30px;
+}
+
+.two-d-about-copy h3 {
+  max-width: 600px;
+
+  margin: 0;
+
+  font-family:
+    "Fraunces",
+    Georgia,
+    serif;
+
+  font-size: 28px;
+
+  line-height: 1.15;
+
+  font-weight: 500;
+
+  letter-spacing: -.035em;
+
+  color: var(--ink-950);
+}
+
+.two-d-about-copy h3 em {
+  color: var(--rose-500);
+  font-style: italic;
+}
+
+.two-d-about-copy p {
+  max-width: 600px;
+
+  margin: 17px 0 0;
+
+  font-size: 14px;
+
+  line-height: 1.8;
+
+  color: var(--ink-600);
+}
+
+.two-d-stats {
+  border-left:
+    1px solid var(--border-subtle);
+
+  padding-left: 24px;
+}
+
+.two-d-stats div {
+  padding: 7px 0 22px;
+
+  border-bottom:
+    1px solid var(--border-subtle);
+}
+
+.two-d-stats div + div {
+  padding-top: 22px;
+}
+
+.two-d-stats strong {
+  display: block;
+
+  font-family:
+    "Fraunces",
+    Georgia,
+    serif;
+
+  font-size: 37px;
+
+  line-height: 1;
+
+  font-weight: 500;
+
+  color: var(--ink-950);
+}
+
+.two-d-stats span {
+  display: block;
+
+  margin-top: 7px;
+
+  font-size: 11px;
+
+  line-height: 1.5;
+
+  color: var(--ink-500);
+}
+
+/* =========================================================
+   EXPERIENCE
+   ========================================================= */
+
+.two-d-experience {
+  padding-top: 5px;
+}
+
+.two-d-experience-row {
+  display: grid;
+
+  grid-template-columns:
+    25px
+    12px
+    minmax(0,1fr)
+    20px;
+
+  gap: 13px;
+
+  padding: 25px 0;
+
+  border-bottom:
+    1px solid var(--border-subtle);
+
+  transition:
+    padding-left .2s ease,
+    background .2s ease;
+}
+
+.two-d-experience-row:hover {
+  padding-left: 8px;
+}
+
+.two-d-experience-index {
+  padding-top: 2px;
+
+  color: var(--ink-400);
+
+  font-family:
+    "IBM Plex Mono",
+    monospace;
+
+  font-size: 9px;
+}
+
+.two-d-experience-marker {
+  position: relative;
+}
+
+.two-d-experience-marker::after {
+  content: "";
+
+  position: absolute;
+
+  top: 12px;
+  bottom: -39px;
+
+  left: 5px;
+
+  width: 1px;
+
+  background:
+    var(--paper-300);
+}
+
+.two-d-experience-row:last-child
+.two-d-experience-marker::after {
+  display: none;
+}
+
+.two-d-experience-marker span {
+  position: relative;
+
+  z-index: 2;
+
+  display: block;
+
+  width: 9px;
+  height: 9px;
+
+  margin-top: 3px;
+
+  border-radius: 50%;
+
+  background:
+    var(--rose-500);
+
+  box-shadow:
+    0 0 0 4px
+    rgba(214,51,108,.08);
+}
+
+.two-d-experience-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.two-d-experience-header h3 {
+  margin: 0;
+
+  color: var(--ink-950);
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+.two-d-experience-header p {
+  margin: 5px 0 0;
+
+  color: var(--ink-500);
+
+  font-size: 12px;
+}
+
+.two-d-experience-header time {
+  flex-shrink: 0;
+
+  color: var(--ink-400);
+
+  font-family:
+    "IBM Plex Mono",
+    monospace;
+
+  font-size: 9px;
+}
+
+.two-d-experience-description {
+  max-width: 620px;
+
+  margin: 11px 0 0;
+
+  color: var(--ink-600);
+
+  font-size: 12px;
+
+  line-height: 1.7;
+}
+
+.two-d-row-arrow {
+  color: var(--ink-400);
+
+  font-size: 14px;
+
+  transition:
+    color .2s ease,
+    transform .2s ease;
+}
+
+.two-d-experience-row:hover
+.two-d-row-arrow {
+  color: var(--rose-500);
+
+  transform:
+    translate(2px,-2px);
+}
+
+/* =========================================================
+   EDUCATION
+   ========================================================= */
+
+.two-d-education {
+  display: grid;
+
+  grid-template-columns:
+    1fr 180px;
+
+  gap: 0;
+
+  padding-top: 28px;
+}
+
+.two-d-education-main {
+  padding-right: 30px;
+}
+
+.two-d-small-label {
+  display: block;
+
+  margin-bottom: 10px;
+
+  color: var(--rose-500);
+
+  font-family:
+    "IBM Plex Mono",
+    monospace;
+
+  font-size: 9px;
+
+  letter-spacing: .1em;
+}
+
+.two-d-education h3 {
+  margin: 0;
+
+  font-family:
+    "Fraunces",
+    Georgia,
+    serif;
+
+  font-size: 24px;
+
+  font-weight: 500;
+
+  color: var(--ink-950);
+}
+
+.two-d-education-main > p {
+  margin: 7px 0 0;
+
+  color: var(--ink-600);
+
+  font-size: 13px;
+}
+
+.two-d-muted {
+  display: block;
+
+  margin-top: 10px;
+
+  color: var(--ink-400);
+
+  font-family:
+    "IBM Plex Mono",
+    monospace;
+
+  font-size: 9px;
+}
+
+.two-d-education-languages {
+  padding-left: 25px;
+
+  border-left:
+    1px solid var(--border-subtle);
+}
+
+.two-d-education-languages div {
+  margin-bottom: 12px;
+
+  color: var(--ink-800);
+
+  font-size: 12px;
+}
+
+.two-d-education-languages small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: var(--ink-400);
+
+  font-size: 10px;
+}
+
+.two-d-skills {
+  grid-column: 1 / -1;
+
+  margin-top: 35px;
+
+  padding-top: 25px;
+
+  border-top:
+    1px solid var(--border-subtle);
+}
+
+.two-d-chip-list,
+.two-d-softskills {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px;
+}
+
+.two-d-chip-list span,
+.two-d-softskills span {
+  padding: 6px 9px;
+
+  border:
+    1px solid var(--border-subtle);
+
+  background:
+    var(--paper-100);
+
+  color: var(--ink-600);
+
+  font-size: 10px;
+
+  transition:
+    border-color .2s ease,
+    color .2s ease,
+    transform .2s ease;
+}
+
+.two-d-chip-list span:hover,
+.two-d-softskills span:hover {
+  border-color:
+    var(--rose-400);
+
+  color:
+    var(--rose-500);
+
+  transform:
+    translateY(-1px);
+}
+
+.two-d-softskills {
+  margin-top: 8px;
+}
+
+/* =========================================================
+   PROJECTS
+   ========================================================= */
+
+.two-d-projects {
+  padding-top: 30px;
+}
+
+.two-d-project-item {
+  position: relative;
+
+  padding-bottom: 25px;
+}
+
+.two-d-project-item + .two-d-project-item {
+  padding-top: 25px;
+
+  border-top:
+    1px solid var(--border-subtle);
+}
+
+/*
+ * Important:
+ *
+ * We do NOT recreate ProjectShowcase.
+ * Your existing visual remains the project visual.
+ *
+ * This wrapper only makes it belong to the
+ * reference-style panel.
+ */
+
+.two-d-project-item > * {
+  margin: 0 !important;
+}
+
+/* =========================================================
+   CONTACT
+   ========================================================= */
+
+.two-d-contact {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(260px, .9fr);
+
+  gap: 45px;
+
+  padding-top: 30px;
+}
+
+.two-d-contact-copy h3 {
+  margin: 0;
+
+  font-family:
+    "Fraunces",
+    Georgia,
+    serif;
+
+  font-size: 43px;
+
+  line-height: .98;
+
+  letter-spacing: -.045em;
+
+  font-weight: 500;
+
+  color: var(--ink-950);
+}
+
+.two-d-contact-copy h3 em {
+  color: var(--rose-500);
+  font-style: italic;
+}
+
+.two-d-contact-copy p {
+  max-width: 400px;
+
+  margin: 18px 0 0;
+
+  color: var(--ink-600);
+
+  font-size: 13px;
+
+  line-height: 1.7;
+}
+
+.two-d-contact-links {
+  border-top:
+    1px solid var(--border-subtle);
+}
+
+.two-d-contact-links a {
+  display: grid;
+
+  grid-template-columns:
+    60px 1fr 15px;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 15px 0;
+
+  border-bottom:
+    1px solid var(--border-subtle);
+
+  color: var(--ink-500);
+
+  text-decoration: none;
+
+  font-size: 10px;
+}
+
+.two-d-contact-links a strong {
+  color: var(--ink-800);
+
+  font-size: 11px;
+
+  font-weight: 500;
+}
+
+.two-d-contact-links a > span:last-child {
+  color: var(--ink-400);
+
+  transition:
+    color .2s ease,
+    transform .2s ease;
+}
+
+.two-d-contact-links a:hover > span:last-child {
+  color: var(--rose-500);
+
+  transform:
+    translate(2px,-2px);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.two-d-footer {
+  display: grid;
+
+  grid-template-columns:
+    1fr auto auto;
+
+  align-items: center;
+
+  gap: 25px;
+
+  padding: 30px 10px;
+
+  color: var(--ink-500);
+
+  font-size: 10px;
+}
+
+.two-d-footer div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+}
+
+.two-d-footer strong {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+
+  background:
+    var(--rose-500);
+
+  color: white;
+
+  font-family:
+    "Fraunces",
+    Georgia,
+    serif;
+}
+
+.two-d-footer a {
+  color: var(--ink-500);
+
+  text-decoration: none;
+}
+
+.two-d-footer a:hover {
+  color: var(--rose-500);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 760px) {
+.home2d-page {
+  width: min(
+    calc(100% - 32px),
+    1180px
+  );
+
+  margin: 0 auto;
+
+  padding:
+    34px 0 70px;
+
+  position: relative;
+  z-index: 2;
+}
+
+  .two-d-banner-wrap {
+    height: 190px;
+  }
+
+  .two-d-profile-body {
+    padding:
+      0 18px 20px;
+  }
+
+  .two-d-avatar-wrap {
+    width: 92px;
+    height: 92px;
+
+    margin-top: -46px;
+  }
+
+  .two-d-status {
+    font-size: 9px;
+  }
+
+  .two-d-name {
+    font-size: 23px;
+  }
+
+  .two-d-nav {
+    width: 100%;
+
+    justify-content: flex-start;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+  }
+
+  .two-d-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .two-d-nav a {
+    flex-shrink: 0;
+  }
+
+  .two-d-section-inner {
+    display: block;
+  }
+
+  .two-d-annotation {
+    display: none;
+  }
+
+  .two-d-section-main {
+    border-left: 0;
+
+    padding:
+      30px 18px 34px;
+  }
+
+  .two-d-section-heading {
+    grid-template-columns:
+      30px 1fr;
+
+    padding-bottom: 22px;
+  }
+
+  .two-d-section-heading h2 {
+    font-size: 27px;
+  }
+
+  .two-d-about {
+    grid-template-columns: 1fr;
+
+    gap: 28px;
+  }
+
+  .two-d-stats {
+    display: grid;
+
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 20px;
+
+    padding:
+      20px 0 0;
+
+    border-left: 0;
+
+    border-top:
+      1px solid var(--border-subtle);
+  }
+
+  .two-d-stats div {
+    padding: 0 !important;
+
+    border-bottom: 0;
+  }
+
+  .two-d-stats strong {
+    font-size: 32px;
+  }
+
+  .two-d-experience-row {
+    grid-template-columns:
+      17px
+      10px
+      minmax(0,1fr)
+      14px;
+
+    gap: 9px;
+
+    padding: 21px 0;
+  }
+
+  .two-d-experience-header {
+    display: block;
+  }
+
+  .two-d-experience-header time {
+    display: inline-block;
+
+    margin-top: 7px;
+  }
+
+  .two-d-experience-description {
+    font-size: 11px;
+  }
+
+  .two-d-education {
+    grid-template-columns: 1fr;
+  }
+
+  .two-d-education-main {
+    padding-right: 0;
+  }
+
+  .two-d-education-languages {
+    margin-top: 25px;
+
+    padding:
+      20px 0 0;
+
+    border-left: 0;
+
+    border-top:
+      1px solid var(--border-subtle);
+  }
+
+  .two-d-contact {
+    grid-template-columns: 1fr;
+
+    gap: 30px;
+  }
+
+  .two-d-contact-copy h3 {
+    font-size: 36px;
+  }
+
+  .two-d-footer {
+    grid-template-columns: 1fr auto;
+
+    padding-bottom: 20px;
+  }
+
+  .two-d-footer > span {
+    display: none;
+  }
+}
+
+@media (max-width: 430px) {
+  .two-d-banner-wrap {
+    height: 155px;
+  }
+
+  .two-d-profile-body {
+    padding:
+      0 14px 18px;
+  }
+
+  .two-d-avatar-wrap {
+    width: 78px;
+    height: 78px;
+
+    margin-top: -39px;
+  }
+
+  .two-d-status {
+    display: none;
+  }
+
+  .two-d-name {
+    font-size: 21px;
+  }
+
+  .two-d-bio {
+    font-size: 12px;
+  }
+
+  .two-d-meta {
+    gap: 5px 12px;
+
+    font-size: 10px;
+  }
+
+  .two-d-section-main {
+    padding:
+      26px 14px 30px;
+  }
+
+  .two-d-about-copy h3 {
+    font-size: 24px;
+  }
+
+  .two-d-contact-copy h3 {
+    font-size: 32px;
+  }
+}
+/* =========================================================
+   GLOBAL DEPTH BACKGROUND
+   ========================================================= */
+
+.two-d-depth-background {
+  position: fixed;
+
+  inset: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  z-index: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  background:
+    #fffdfb;
+}
+
+.two-d-depth-background canvas {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: block;
+}
+
+.two-d-depth-vignette {
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 35%,
+      rgba(255,255,255,.22) 72%,
+      rgba(255,255,255,.52) 100%
+    );
+
+  pointer-events: none;
+}
+
+/*
+ * Content must sit above the animated canvas.
+ */
+.home2d-content {
+  position: relative;
+
+  z-index: 1;
+
+  min-height: 100vh;
+}
+
+.home2d-page {
+  position: relative;
+  z-index: 2;
+}

@@ -5,21 +5,33 @@ import SectionLabel from "../components/SectionLabel";
 const skills = [
   "React",
   "React Native",
+  "JavaScript",
+  "Python",
   "Laravel",
-  "JavaScript / Python",
-  "Firebase & Supabase",
+  "Supabase",
+  "PostgreSQL",
   "LLM Integration",
   "Prompt Engineering",
-  "AI-Assisted Coding",
-  "DevOps · Play Console",
+  "NLP",
+  "Machine Learning",
+  "Git & GitHub",
+  "Google Play Console",
   "Scrum (Agile)",
 ];
 
-const softSkills = ["Analytical Thinking", "Problem Solving", "Teamwork", "Communication"];
+const softSkills = [
+  "Analytical Thinking",
+  "Problem Solving",
+  "Teamwork",
+  "Communication",
+];
 
 const achievements = [
   { place: "3rd Place", detail: "Indoneris National Essay Competition, 2024" },
-  { place: "3rd Place", detail: "Klabat University Research Competition, 2025" },
+  {
+    place: "3rd Place",
+    detail: "Klabat University Research Competition, 2025",
+  },
   { place: "5th Place", detail: "Innovation Project, SMA Citra Kasih, 2026" },
 ];
 

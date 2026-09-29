@@ -17,7 +17,11 @@ const ProfileCard = ({ onContact }) => {
       <div className="flex items-center gap-4">
         <div className="relative flex-shrink-0">
           <div className="w-14 h-14 md:w-16 md:h-16 rounded-panel overflow-hidden ring-1 ring-paper-300">
-            <img src="/images.jpg" alt="Profile" className="w-full h-full object-cover" />
+            <img
+              src="/images.jpg"
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
           </div>
           <span className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-md border border-paper-300 bg-ink-950 flex items-center justify-center font-mono text-[9px] text-rose-300">
             {"</>"}
@@ -37,8 +41,8 @@ const ProfileCard = ({ onContact }) => {
       </div>
 
       <p className="text-sm text-ink-600 mt-4 leading-relaxed">
-        Building AI-powered mobile &amp; web products, from React and React
-        Native and creating/integrate LLM that can suit needs.
+        Building web and mobile applications with React and React Native, while
+        integrating practical AI, LLM, and full-stack solutions.
       </p>
 
       <div className="flex flex-wrap gap-2.5 mt-5">

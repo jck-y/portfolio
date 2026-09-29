@@ -9,19 +9,22 @@ const AboutMe = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
         <GlassCard className="p-8 md:p-10 lg:p-12 md:col-span-2">
-          <h2 className="font-display text-2xl md:text-[2rem] font-medium text-ink-950 mb-6 leading-snug">
-            Full-stack engineer with a teaching habit
-          </h2>
-          <p className="text-[15px] leading-[1.85] text-ink-800">
-            I'm a Computer Science graduate (Magna Cum Laude, GPA 3.82) from
-            Universitas Klabat, specializing in mobile apps, web platforms, and
-            applied AI. I've shipped a React Native news app with 10.000+
-            downloads, built a stunting-risk tracking tool used for real health
-            evaluations, and integrated LLM chatbots into production
-            applications. Alongside building scalable solutions using
-            AI-assisted workflows, I've mentored 500+ students in programming
-            and currently teach Machine Learning and Generative AI to high
-            schoolers.
+          <h3>
+            Software Engineer
+            <em> building full-stack products with AI.</em>
+          </h3>
+
+          <p>
+            I'm a Computer Science graduate with hands-on experience building
+            and deploying web and mobile applications using React, React Native,
+            Laravel, and Python.
+          </p>
+
+          <p>
+            My work spans full-stack development, database integration, mobile
+            applications, and practical AI/LLM integration. I also have
+            experience teaching programming, Machine Learning, NLP, and
+            Generative AI.
           </p>
         </GlassCard>
 
