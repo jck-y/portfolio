@@ -26,7 +26,7 @@ const STYLES = Array.from({ length: STYLE_LEVELS }, (_, i) => {
  *  - Cells are coarser on small screens.
  */
 const AnimatedBanner2D = ({
-  src = "/bg.webp",
+  src = "/bg1.webp",
   cellWidth = 7,
   cellHeight = 9,
   speed = 0.35,
