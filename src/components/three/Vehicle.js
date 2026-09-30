@@ -109,15 +109,15 @@ const Vehicle = ({ inputRef, portals, paused, onEnterPortal, resetSignal, reduce
     <group ref={group}>
       <mesh position={[0, 0.42, 0]}>
         <boxGeometry args={[1.15, 0.45, 2.1]} />
-        <meshStandardMaterial color="#FFFFFF" roughness={0.35} metalness={0.1} />
+        <meshLambertMaterial color="#FFFFFF" />
       </mesh>
       <mesh position={[0, 0.78, -0.15]}>
         <boxGeometry args={[0.85, 0.32, 1.05]} />
-        <meshStandardMaterial color="#1A1620" roughness={0.4} />
+        <meshLambertMaterial color="#1A1620" />
       </mesh>
       <mesh position={[0, 0.5, 0.2]}>
         <boxGeometry args={[1.17, 0.08, 1.2]} />
-        <meshStandardMaterial color="#D6336C" roughness={0.3} emissive="#D6336C" emissiveIntensity={0.15} />
+        <meshLambertMaterial color="#D6336C" emissive="#D6336C" emissiveIntensity={0.15} />
       </mesh>
       {[
         [-0.62, 0.72],
@@ -127,7 +127,7 @@ const Vehicle = ({ inputRef, portals, paused, onEnterPortal, resetSignal, reduce
       ].map(([x, z], i) => (
         <mesh key={i} ref={wheelRefs[i]} position={[x, 0.22, z]} rotation={[0, 0, Math.PI / 2]}>
           <cylinderGeometry args={[0.22, 0.22, 0.18, 16]} />
-          <meshStandardMaterial color="#2B2630" roughness={0.85} />
+          <meshLambertMaterial color="#2B2630" />
         </mesh>
       ))}
     </group>

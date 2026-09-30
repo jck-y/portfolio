@@ -1,5 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
+import { PerformanceMonitor } from "@react-three/drei";
 import { useReducedMotion } from "framer-motion";
 import World from "./World";
 import TouchControls from "./TouchControls";
@@ -8,10 +9,12 @@ import useDriveInput from "../../hooks/useDriveInput";
 function supportsWebGL() {
   try {
     const canvas = document.createElement("canvas");
-    return !!(
-      window.WebGLRenderingContext &&
-      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
-    );
+    const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    if (!gl) return false;
+    // Release the probe context right away so it doesn't count against the
+    // browser's limit on live WebGL contexts.
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return true;
   } catch (e) {
     return false;
   }
@@ -45,19 +48,25 @@ class Canvas3DErrorBoundary extends React.Component {
 const MOBILE_QUERY = "(max-width: 768px)";
 const TOUCH_QUERY = "(pointer: coarse)";
 
-const Scene3D = ({ activeSection, onEnterPortal, resetSignal }) => {
+// Read synchronously so <Canvas> is created with the right `gl` options the
+// first time. (`antialias` can't be changed after the context exists, and the
+// old code initialised these to `false` and only corrected them in an effect.)
+const matches = (q) => typeof window !== "undefined" && window.matchMedia(q).matches;
+
+const DESKTOP_MAX_DPR = 1.5;
+
+const Scene3D = ({ activeSection, onEnterPortal, resetSignal, active = true }) => {
   const reduceMotion = useReducedMotion();
   const { inputRef, setTouchInput, releaseTouchInput } = useDriveInput();
-  const [webglOK, setWebglOK] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTouch, setIsTouch] = useState(false);
+  const [webglOK] = useState(supportsWebGL);
+  const [isMobile, setIsMobile] = useState(() => matches(MOBILE_QUERY));
+  const [isTouch, setIsTouch] = useState(() => matches(TOUCH_QUERY));
+  // Adaptive resolution: PerformanceMonitor drops this to 1 if FPS sags.
+  const [maxDpr, setMaxDpr] = useState(isMobile ? 1 : DESKTOP_MAX_DPR);
 
   useEffect(() => {
-    setWebglOK(supportsWebGL());
     const mq = window.matchMedia(MOBILE_QUERY);
     const tq = window.matchMedia(TOUCH_QUERY);
-    setIsMobile(mq.matches);
-    setIsTouch(tq.matches);
     const onMq = (e) => setIsMobile(e.matches);
     const onTq = (e) => setIsTouch(e.matches);
     mq.addEventListener("change", onMq);
@@ -71,15 +80,33 @@ const Scene3D = ({ activeSection, onEnterPortal, resetSignal }) => {
   if (!webglOK) return <StaticFallback />;
 
   const paused = !!activeSection;
+  const ceiling = isMobile ? 1 : DESKTOP_MAX_DPR;
+  const dprCap = Math.min(maxDpr, ceiling);
+
+  // never  -> 3D mode isn't visible (2D is showing): render nothing at all.
+  // demand -> a content panel is open on top: the world is frozen anyway.
+  // always -> actually driving around.
+  const frameloop = !active ? "never" : paused ? "demand" : "always";
 
   return (
     <div className="absolute inset-0">
       <Canvas3DErrorBoundary>
         <Canvas
-          dpr={isMobile ? 1 : [1, 2]}
-          gl={{ antialias: !isMobile, powerPreference: "high-performance" }}
+          dpr={[1, dprCap]}
+          frameloop={frameloop}
+          gl={{
+            antialias: !isMobile,
+            stencil: false,
+            powerPreference: "high-performance",
+          }}
           camera={{ position: [0, 4.5, 14.7], fov: 55 }}
         >
+          <PerformanceMonitor
+            flipflops={2}
+            onDecline={() => setMaxDpr(1)}
+            onFallback={() => setMaxDpr(1)}
+            onIncline={() => setMaxDpr(ceiling)}
+          />
           <Suspense fallback={null}>
             <World
               inputRef={inputRef}
@@ -93,7 +120,9 @@ const Scene3D = ({ activeSection, onEnterPortal, resetSignal }) => {
         </Canvas>
       </Canvas3DErrorBoundary>
 
-      {isTouch && !paused && <TouchControls onMove={setTouchInput} onRelease={releaseTouchInput} />}
+      {isTouch && !paused && active && (
+        <TouchControls onMove={setTouchInput} onRelease={releaseTouchInput} />
+      )}
     </div>
   );
 };

@@ -1,7 +1,8 @@
-import React, { Suspense, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import ProfileCard from "../components/sections/ProfiileCard";
+import Scene3D from "../components/three/Scene3D";
 
 import AboutMe from "./AboutMe";
 import ResumePages from "./ResumePages";
@@ -10,9 +11,6 @@ import ContactPages from "./ContactPages";
 
 import "../styles/global.css";
 
-// Three.js + R3F + drei are heavy — loaded as their own chunk
-// so they never block the first paint.
-const Scene3D = React.lazy(() => import("../components/three/Scene3D"));
 
 const SECTIONS = {
   about: {
@@ -104,7 +102,7 @@ const CloseIcon = () => (
   </svg>
 );
 
-const Home3D = () => {
+const Home3D = ({ active = true }) => {
   const [activeSection, setActiveSection] = useState(null);
   const [resetSignal, setResetSignal] = useState(0);
 
@@ -176,13 +174,12 @@ const Home3D = () => {
           3D WORLD
           ===================================================== */}
 
-      <Suspense fallback={null}>
-        <Scene3D
-          activeSection={activeSection}
-          onEnterPortal={openSection}
-          resetSignal={resetSignal}
-        />
-      </Suspense>
+      <Scene3D
+        active={active}
+        activeSection={activeSection}
+        onEnterPortal={openSection}
+        resetSignal={resetSignal}
+      />
 
       {/* =====================================================
           PROFILE CARD
@@ -197,7 +194,7 @@ const Home3D = () => {
           ===================================================== */}
 
       {!activeSection && (
-        <div className="absolute top-5 right-5 md:top-8 md:right-8 z-20 hidden sm:block bg-paper-50/90 backdrop-blur border border-paper-300 rounded-full px-4 py-2 text-xs text-ink-500">
+        <div className="absolute top-5 right-5 md:top-8 md:right-8 z-20 hidden sm:block bg-paper-50/95 border border-paper-300 rounded-full px-4 py-2 text-xs text-ink-500">
           WASD / panah untuk berkendara, dekati objek untuk membuka
         </div>
       )}
@@ -228,7 +225,7 @@ const Home3D = () => {
         }}
         className="fixed bottom-4 sm:bottom-7 left-1/2 z-20"
       >
-        <nav className="flex items-center gap-0.5 p-1 sm:p-1.5 rounded-2xl bg-paper-50/95 border border-paper-300 backdrop-blur-xl shadow-[0_20px_50px_-24px_rgba(26,22,32,0.4)]">
+        <nav className="flex items-center gap-0.5 p-1 sm:p-1.5 rounded-2xl bg-paper-50 border border-paper-300 shadow-[0_20px_50px_-24px_rgba(26,22,32,0.4)]">
           {navItems.map((item) => {
             const isActive =
               item.key === "home" ? !activeSection : activeSection === item.key;

@@ -16,11 +16,11 @@ const socialLinks = [
   },
 ];
 
-const PortfolioHeader2D = () => {
+const PortfolioHeader2D = ({ active = true }) => {
   return (
     <header className="two-d-profile">
       <div className="two-d-banner-wrap">
-        <AnimatedBanner2D />
+        <AnimatedBanner2D active={active} />
       </div>
 
       <div className="two-d-profile-body">
@@ -30,6 +30,9 @@ const PortfolioHeader2D = () => {
               src="/images.webp"
               alt="Jacky Karongkong"
               className="two-d-avatar"
+              width="96"
+              height="96"
+              decoding="async"
             />
           </div>
 

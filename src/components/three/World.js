@@ -19,7 +19,7 @@ const World = ({ inputRef, paused, onEnterPortal, resetSignal, activeSection, re
 
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[34, 34]} />
-        <meshStandardMaterial color="#F8F4F5" roughness={0.95} />
+        <meshLambertMaterial color="#F8F4F5" />
       </mesh>
       <gridHelper args={[34, 34, "#E3D5DA", "#EFE6E9"]} position={[0, 0.015, 0]} />
 

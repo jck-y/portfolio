@@ -49,11 +49,7 @@
 
   overflow: hidden;
 
-  backdrop-filter:
-    blur(4px);
 
-  -webkit-backdrop-filter:
-    blur(4px);
 }
 .two-d-banner-wrap {
   height: 245px;
@@ -117,7 +113,6 @@
       rgba(255,255,255,0.05) 3px
     );
 
-  mix-blend-mode: screen;
 
   opacity: 0.45;
 }
@@ -140,7 +135,6 @@
 
   background-size: 4px 4px;
 
-  mix-blend-mode: screen;
 }
 
 .two-d-profile-body {
@@ -364,7 +358,6 @@
     0 15px 35px
       rgba(26,22,32,.08);
 
-  backdrop-filter: blur(16px);
 }
 
 .two-d-nav a {
@@ -396,19 +389,18 @@
 .two-d-section {
   position: relative;
 
+  content-visibility: auto;
+  contain-intrinsic-size: auto 520px;
+
   margin-top: 13px;
 
   background:
-    rgba(255,255,255,.90);
+    rgba(255,255,255,.92);
 
   border:
     1px solid rgba(35, 28, 35, .12);
 
-  backdrop-filter:
-    blur(3px);
 
-  -webkit-backdrop-filter:
-    blur(3px);
 }
 
 .two-d-section-inner {
@@ -1395,7 +1387,16 @@
 
   pointer-events: none;
 
+  /* isolate this layer so it never triggers layout/paint of the page */
+  contain: layout paint style;
+
   background:
+    radial-gradient(
+      circle calc(max(100vw, 100vh) * 0.65) at 52% 38%,
+      rgba(214,51,108,0.035) 0,
+      rgba(214,51,108,0.012) 45%,
+      rgba(255,255,255,0) 100%
+    ),
     #fffdfb;
 }
 

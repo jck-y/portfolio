@@ -192,7 +192,6 @@ body {
   border: 1px solid var(--border-subtle);
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(14px);
   box-shadow: 0 10px 30px rgba(26, 22, 32, 0.08);
 }
 

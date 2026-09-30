@@ -1,213 +1,192 @@
 import React, { useEffect, useRef } from "react";
 
-const DepthBackground2D = () => {
+/**
+ * Dot-terrain background.
+ *
+ * Perf notes (why this differs from the first version):
+ *  - The canvas is now VIEWPORT-sized. Before, it was sized to the whole
+ *    document height (width x scrollHeight x dpr), which can be tens of
+ *    millions of pixels and ~250k cells per frame. Because the element is
+ *    position: fixed, only the top viewport-sized slice was ever visible.
+ *  - Dots are batched by opacity bucket (a handful of fill() calls) instead
+ *    of one fillStyle string + fillRect per dot.
+ *  - Static work (base colour, radial glow) lives in CSS, not redrawn.
+ *  - Frame rate is capped, and the loop stops when the tab is hidden,
+ *    the 2D layer is inactive (3D mode), or reduced-motion is on.
+ */
+
+const CELL = 8;
+const DOT_SIZE = 1.7;
+const TARGET_FPS = 24;
+const FRAME_MS = 1000 / TARGET_FPS;
+const BUCKETS = 12;
+const MAX_ALPHA = 0.2;
+
+const BUCKET_STYLES = Array.from({ length: BUCKETS }, (_, i) => {
+  const alpha = ((i + 0.5) / BUCKETS) * MAX_ALPHA;
+  return `rgba(214,51,108,${alpha.toFixed(3)})`;
+});
+const BUCKET_SIZES = Array.from(
+  { length: BUCKETS },
+  (_, i) => DOT_SIZE + (i / (BUCKETS - 1)) * 0.4,
+);
+
+const DepthBackground2D = ({ active = true }) => {
+  const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    const container = containerRef.current;
     const canvas = canvasRef.current;
-
-    if (!canvas) return;
+    if (!container || !canvas || !active) return undefined;
 
     const ctx = canvas.getContext("2d");
+    if (!ctx) return undefined;
 
-    if (!ctx) return;
+    const reducedMotionQuery = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
 
-    let animationFrame;
+    let raf = 0;
+    let running = false;
     let width = 0;
     let height = 0;
-    let dpr = 1;
+    let cols = 0;
+    let rows = 0;
     let time = 0;
-    let lastTime = performance.now();
-
-    const CELL = 8;
-    const DOT_SIZE = 1.7;
+    let lastFrame = performance.now();
+    let edge = new Float32Array(0); // static per-cell value, computed once
+    let phase = new Float32Array(0); // static per-cell phase, computed once
+    let colX = new Float32Array(0);
 
     const resize = () => {
-      width = window.innerWidth;
-      height = Math.max(
-        document.documentElement.scrollHeight,
-        window.innerHeight,
-      );
+      width = container.clientWidth || window.innerWidth;
+      height = container.clientHeight || window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      cols = Math.ceil(width / CELL) + 2;
+      rows = Math.ceil(height / CELL) + 2;
+
+      edge = new Float32Array(cols * rows);
+      phase = new Float32Array(cols * rows);
+      colX = new Float32Array(cols);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const i = r * cols + c;
+          edge[i] = Math.sin(c * 0.51 + r * 0.37) * 0.5 + 0.5;
+          phase[i] = c * 0.19 + r * 0.31;
+        }
+      }
+      paint();
     };
 
-    /*
-     * Generates large organic "terrain"
-     * regions.
-     */
-    const noise = (x, y, t) => {
-      const a = Math.sin(x * 0.011 + Math.sin(y * 0.006) * 2.4 + t * 0.00016);
-
-      const b = Math.cos(y * 0.014 - Math.cos(x * 0.005) * 2.1 + t * 0.00012);
-
-      const c = Math.sin((x + y) * 0.0045 + t * 0.00008);
-
-      const d = Math.cos((x - y) * 0.0028);
-
-      return a * 0.27 + b * 0.3 + c * 0.25 + d * 0.18;
-    };
-
-    /*
-     * Several larger "islands" create
-     * the depth seen in the reference.
-     */
-    const terrain = (x, y, t) => {
-      const n = noise(x, y, t);
-
-      const wave = Math.sin(x * 0.003 + y * 0.008 + t * 0.00013) * 0.18;
-
-      return n + wave;
-    };
-
-    const draw = (now) => {
-      const delta = Math.min(now - lastTime, 50);
-
-      lastTime = now;
-      time += delta;
-
+    const paint = () => {
       ctx.clearRect(0, 0, width, height);
 
-      /*
-       * Base.
-       *
-       * Keep this slightly warm rather than
-       * pure #fff so the pink particles remain
-       * visible without becoming aggressive.
-       */
-      ctx.fillStyle = "#fffdfb";
-
-      ctx.fillRect(0, 0, width, height);
-
-      const cols = Math.ceil(width / CELL) + 2;
-
-      const rows = Math.ceil(height / CELL) + 2;
-
-      /*
-       * Slow global movement.
-       */
       const driftX = Math.sin(time * 0.00008) * 20;
-
       const driftY = Math.cos(time * 0.00006) * 14;
 
+      // Per-column values that don't depend on the row.
+      for (let c = 0; c < cols; c++) colX[c] = c * CELL + driftX;
+
+      const paths = new Array(BUCKETS);
+      for (let b = 0; b < BUCKETS; b++) paths[b] = new Path2D();
+
       for (let row = 0; row < rows; row++) {
+        const y = row * CELL + driftY;
+        const sinY = Math.sin(y * 0.006) * 2.4;
+        const yB = y * 0.014;
+        const threshold = 0.2 + Math.sin(row * 0.17 + time * 0.00018) * 0.035;
+        const timeA = time * 0.00016;
+        const timeB = time * 0.00012;
+        const timeC = time * 0.00008;
+        const timeW = time * 0.00013;
+        const timePulse = time * 0.0011;
+
         for (let col = 0; col < cols; col++) {
-          const x = col * CELL + driftX;
+          const x = colX[col];
 
-          const y = row * CELL + driftY;
+          const a = Math.sin(x * 0.011 + sinY + timeA);
+          const b = Math.cos(yB - Math.cos(x * 0.005) * 2.1 + timeB);
+          const c = Math.sin((x + y) * 0.0045 + timeC);
+          const d = Math.cos((x - y) * 0.0028);
+          const wave = Math.sin(x * 0.003 + y * 0.008 + timeW) * 0.18;
+          const value = a * 0.27 + b * 0.3 + c * 0.25 + d * 0.18 + wave;
 
-          const value = terrain(x, y, time);
+          if (value < threshold) continue;
 
-          /*
-           * Convert noise into a threshold.
-           *
-           * This creates clusters instead of
-           * uniformly distributed dots.
-           */
-          const threshold = 0.2 + Math.sin(row * 0.17 + time * 0.00018) * 0.035;
-
-          if (value < threshold) {
-            continue;
-          }
-
-          /*
-           * Depth calculation.
-           *
-           * Higher terrain = stronger pink.
-           */
+          const i = row * cols + col;
           const depth = Math.pow(
             Math.min(1, Math.max(0, (value - threshold) / 0.65)),
             0.72,
           );
-
-          /*
-           * Edge fading makes clusters dissolve
-           * naturally instead of ending abruptly.
-           */
-          const edgeNoise = Math.sin(col * 0.51 + row * 0.37) * 0.5 + 0.5;
-
-          const opacity = 0.025 + depth * 0.13 + edgeNoise * 0.018;
-
-          /*
-           * Occasional brighter cells.
-           */
-          const pulse = Math.sin(col * 0.19 + row * 0.31 + time * 0.0011);
-
+          const opacity = 0.025 + depth * 0.13 + edge[i] * 0.018;
+          const pulse = Math.sin(phase[i] + timePulse);
           const finalOpacity = Math.min(
-            0.2,
+            MAX_ALPHA,
             opacity + Math.max(0, pulse) * depth * 0.045,
           );
 
-          /*
-           * Pink palette.
-           *
-           * Same family as your existing
-           * rose/pink theme.
-           */
-          ctx.fillStyle = `rgba(
-              214,
-              51,
-              108,
-              ${finalOpacity}
-            )`;
-
-          const size = DOT_SIZE + depth * 0.45;
-
-          ctx.fillRect(x, y, size, size);
+          const bucket = Math.min(
+            BUCKETS - 1,
+            Math.floor((finalOpacity / MAX_ALPHA) * BUCKETS),
+          );
+          const size = BUCKET_SIZES[bucket];
+          paths[bucket].rect(x, y, size, size);
         }
       }
 
-      /*
-       * Very subtle moving highlight field.
-       * This produces the "depth" sensation.
-       */
-      const gradient = ctx.createRadialGradient(
-        width * 0.52,
-        height * 0.38,
-        0,
-        width * 0.52,
-        height * 0.38,
-        Math.max(width, height) * 0.65,
-      );
-
-      gradient.addColorStop(0, "rgba(214,51,108,0.035)");
-
-      gradient.addColorStop(0.45, "rgba(214,51,108,0.012)");
-
-      gradient.addColorStop(1, "rgba(255,255,255,0)");
-
-      ctx.fillStyle = gradient;
-
-      ctx.fillRect(0, 0, width, height);
-
-      animationFrame = requestAnimationFrame(draw);
+      for (let b = 0; b < BUCKETS; b++) {
+        ctx.fillStyle = BUCKET_STYLES[b];
+        ctx.fill(paths[b]);
+      }
     };
+
+    const loop = (now) => {
+      if (!running) return;
+      raf = requestAnimationFrame(loop);
+      const elapsed = now - lastFrame;
+      if (elapsed < FRAME_MS) return;
+      lastFrame = now;
+      time += Math.min(elapsed, 100);
+      paint();
+    };
+
+    const start = () => {
+      if (running || reducedMotionQuery.matches || document.hidden) return;
+      running = true;
+      lastFrame = performance.now();
+      raf = requestAnimationFrame(loop);
+    };
+
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+
+    const onVisibility = () => (document.hidden ? stop() : start());
 
     resize();
+    start();
 
-    window.addEventListener("resize", resize);
-
-    animationFrame = requestAnimationFrame(draw);
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(container);
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
-      cancelAnimationFrame(animationFrame);
-
-      window.removeEventListener("resize", resize);
+      stop();
+      resizeObserver.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, []);
+  }, [active]);
 
   return (
-    <div className="two-d-depth-background" aria-hidden="true">
+    <div ref={containerRef} className="two-d-depth-background" aria-hidden="true">
       <canvas ref={canvasRef} />
-
       <div className="two-d-depth-vignette" />
     </div>
   );

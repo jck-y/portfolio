@@ -15,7 +15,7 @@ import { projects } from "../data/projects";
 
 import "../styles/home2d.css";
 
-const Home2D = () => {
+const Home2D = ({ active = true }) => {
   const reduceMotion = useReducedMotion();
 
   const reveal = {
@@ -45,7 +45,7 @@ const Home2D = () => {
   return (
     <main className="home2d">
       {/* Animated background */}
-      <DepthBackground2D />
+      <DepthBackground2D active={active} />
 
       {/* Main content layer */}
       <div className="home2d-content">
@@ -53,7 +53,7 @@ const Home2D = () => {
             This wrapper must contain the ENTIRE portfolio.
         */}
         <div className="home2d-page">
-          <PortfolioHeader2D />
+          <PortfolioHeader2D active={active} />
 
           <nav className="two-d-nav">
             <a href="#about">About</a>

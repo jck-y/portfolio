@@ -35,7 +35,7 @@ const PhoneFrame = ({ src, label, alt }) => (
   <div className="w-full max-w-[230px] mx-auto rounded-[2.1rem] border border-ink-950/[0.12] bg-paper-200 p-1.5">
     <div className="relative rounded-[1.7rem] overflow-hidden aspect-[9/19] bg-paper-300">
       {src ? (
-        <img src={src} alt={alt} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-top" />
+        <img src={src} alt={alt} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top" />
       ) : (
         <Placeholder label={label} />
       )}
@@ -55,7 +55,7 @@ const BrowserFrame = ({ src, label, alt }) => (
     </div>
     <div className="relative aspect-[16/10] bg-paper-300">
       {src ? (
-        <img src={src} alt={alt} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-top" />
+        <img src={src} alt={alt} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top" />
       ) : (
         <Placeholder label={label} />
       )}
@@ -140,7 +140,7 @@ const ProjectShowcase = ({ project }) => {
                   onClick={() => step(-1)}
                   disabled={current === 0}
                   aria-label="Previous screenshot"
-                  className="absolute left-1 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-ink-950/[0.12] bg-paper-50/90 backdrop-blur text-ink-600 hover:text-ink-950 hover:border-ink-950/[0.25] transition-all disabled:opacity-30 disabled:pointer-events-none"
+                  className="absolute left-1 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-ink-950/[0.12] bg-paper-50/95 text-ink-600 hover:text-ink-950 hover:border-ink-950/[0.25] transition-all disabled:opacity-30 disabled:pointer-events-none"
                 >
                   <ChevronLeft />
                 </button>
@@ -148,7 +148,7 @@ const ProjectShowcase = ({ project }) => {
                   onClick={() => step(1)}
                   disabled={current === total - 1}
                   aria-label="Next screenshot"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-ink-950/[0.12] bg-paper-50/90 backdrop-blur text-ink-600 hover:text-ink-950 hover:border-ink-950/[0.25] transition-all disabled:opacity-30 disabled:pointer-events-none"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 p-2 rounded-lg border border-ink-950/[0.12] bg-paper-50/95 text-ink-600 hover:text-ink-950 hover:border-ink-950/[0.25] transition-all disabled:opacity-30 disabled:pointer-events-none"
                 >
                   <ChevronRight />
                 </button>
