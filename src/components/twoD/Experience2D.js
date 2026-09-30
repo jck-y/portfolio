@@ -5,25 +5,28 @@ const experience = [
     role: "ICT Teacher",
     org: "SMA Citra Kasih",
     period: "Aug 2025 – Jun 2026",
-    desc: "Taught 80 students in Python, Data Science, and Generative AI, guiding them to build functional LLM chatbots and object-detection projects.",
+    desc: "Taught 80 students across Grades 10–12 in Python, Data Science, Machine Learning, NLP, and Generative AI. Guided students through hands-on projects including LLM-based chatbots and object-detection applications using Python and Google Teachable Machine. Also taught web development with HTML, CSS, and JavaScript, guiding students in building personal portfolio websites.",
   },
+
   {
-    role: "Fullstack Dev & DevOps",
+    role: "Full-Stack Developer & Mobile Engineer",
     org: "Manado Post",
     period: "Jul 2024 – Jan 2025",
-    desc: "Integrated an AI chatbot into the Manado Post React Native app and handled deployment, debugging, and optimization.",
+    desc: "Contributed to the development and maintenance of the Manado Post React Native production application with 10,000+ downloads. Integrated a GPT-4o mini-powered AI chatbot with RAG, voice interaction, and text-to-speech (TTS). Developed AI-powered news summarization and subscription-based access control for AI features, and contributed to a North Sulawesi Governor Election simulation feature. Also handled Google Play releases, deployment, debugging, and performance optimization.",
   },
+
   {
     role: "Freelance Web & Mobile Developer",
     org: "Self-employed",
     period: "2024 – Present",
-    desc: "Developed production-ready web and mobile applications using React and AI-assisted development workflows.",
+    desc: "Developed web and mobile applications for various use cases using React, React Native, Laravel, Python, Supabase, and Firebase. Projects include an employee travel request system with role-based approval workflows and automated web/WhatsApp notifications, a face-recognition attendance system with GPS validation and face embedding verification, a student fitness tracking platform with geolocation and photo verification, and an OSIS e-voting system with voter authorization, duplicate-vote prevention, and real-time election tallying.",
   },
+
   {
     role: "Assistant Lecturer",
     org: "Universitas Klabat",
     period: "2022 – 2025",
-    desc: "Mentored students in Computer Programming with a focus on Python and streamlined coursework evaluation.",
+    desc: "Assisted Computer Programming classes and mentored approximately 500 students in total. Helped students understand Python fundamentals, programming concepts, and problem-solving through hands-on exercises using Google Colab. Also supported coursework evaluation and provided technical feedback through Google Classroom.",
   },
 ];
 
