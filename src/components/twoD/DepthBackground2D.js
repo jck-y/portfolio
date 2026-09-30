@@ -152,7 +152,8 @@ const DepthBackground2D = ({ active = true }) => {
       const elapsed = now - lastFrame;
       if (elapsed < FRAME_MS) return;
       lastFrame = now;
-      time += Math.min(elapsed, 100);
+      const dt = Math.min(elapsed, 100);
+      time += dt;
       paint();
     };
 
@@ -185,7 +186,11 @@ const DepthBackground2D = ({ active = true }) => {
   }, [active]);
 
   return (
-    <div ref={containerRef} className="two-d-depth-background" aria-hidden="true">
+    <div
+      ref={containerRef}
+      className="two-d-depth-background"
+      aria-hidden="true"
+    >
       <canvas ref={canvasRef} />
       <div className="two-d-depth-vignette" />
     </div>

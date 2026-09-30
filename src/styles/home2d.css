@@ -18,7 +18,7 @@
 .home2d-page {
   width: min(
     calc(100% - 32px),
-    1000px
+    990px
   );
 
   margin: 0 auto;
@@ -1412,6 +1412,17 @@
 }
 
 .two-d-depth-vignette {
+  /* ---- Atur "shadow putih" di pinggir layar di sini ----
+     --vignette-start : di mana putih mulai muncul (0% = tengah, 100% = sudut)
+     --vignette-mid   : posisi titik tengah gradient
+     --vignette-mid-a : seberapa putih di titik tengah (0 - 1)
+     --vignette-edge-a: seberapa putih di ujung/sudut (0 - 1)
+     Nol-kan --vignette-*-a untuk menghilangkan efeknya sepenuhnya. */
+  --vignette-start: 35%;
+  --vignette-mid: 72%;
+  --vignette-mid-a: 0.22;
+  --vignette-edge-a: 0.52;
+
   position: absolute;
 
   inset: 0;
@@ -1419,9 +1430,9 @@
   background:
     radial-gradient(
       ellipse at center,
-      transparent 35%,
-      rgba(255,255,255,.22) 72%,
-      rgba(255,255,255,.52) 100%
+      transparent var(--vignette-start),
+      rgba(255,255,255,var(--vignette-mid-a)) var(--vignette-mid),
+      rgba(255,255,255,var(--vignette-edge-a)) 100%
     );
 
   pointer-events: none;

@@ -8,17 +8,17 @@ const links = [
   },
   {
     label: "WhatsApp",
-    value: "WhatsApp",
+    value: "+6285157809772",
     href: "https://wa.me/6285157809772",
   },
   {
     label: "LinkedIn",
-    value: "LinkedIn",
-    href: "https://www.linkedin.com/in/jacky-karongkong-70a896293/",
+    value: "jackykarongkong",
+    href: "https://linkedin.com/in/jackykarongkong/",
   },
   {
     label: "GitHub",
-    value: "GitHub",
+    value: "jck-y",
     href: "https://github.com/jck-y",
   },
 ];
