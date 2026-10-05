@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePages from "./pages/HomePages";
+import { Analytics } from "@vercel/analytics/react";
 import AboutMe from "./pages/AboutMe";
 import ResumePages from "./pages/ResumePages";
 import ContactPages from "./pages/ContactPages";
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/edu" element={<EduPages />} />
         <Route path="/contact" element={<ContactPages />} />
       </Routes>
+      <Analytics />
     </Router>
   );
 };
