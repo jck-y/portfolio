@@ -44,10 +44,10 @@ const PortfolioHeader2D = ({ active = true }) => {
 
         <div className="two-d-name-row">
           <div>
-            <div className="two-d-name">
+            <h1 className="two-d-name">
               Jacky Karongkong
               <span className="two-d-pink-dot" />
-            </div>
+            </h1>
 
             <div className="two-d-username">@jck-y</div>
           </div>

@@ -1,70 +1,68 @@
-# Getting Started with Create React App
+# Jacky Karongkong — Software Engineer Portfolio
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Personal portfolio website of **Jacky Karongkong**, a Software Engineer
+and Full-Stack Developer focused on web development, mobile applications,
+AI integration, and modern software engineering.
 
-## Available Scripts
+## Portfolio
 
-In the project directory, you can run:
+🌐 https://portfolio-jacky-s-projects.vercel.app/
 
-### `npm start`
+## About
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+I'm Jacky Karongkong, a Computer Science graduate and Software Engineer
+with hands-on experience building web and mobile applications using React,
+React Native, JavaScript, Python, Laravel, Supabase, Firebase, and REST APIs.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+My work also includes practical AI and LLM integration, including AI
+chatbots, RAG-based systems, data-driven applications, and Generative AI.
 
-### `npm test`
+## Featured Projects
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Manado Post App & AI Chatbot
+React Native news application with an integrated AI chatbot, RAG,
+voice interaction, text-to-speech, and AI-powered news features.
 
-### `npm run build`
+### Digital Graduation Invitation Platform
+Responsive graduation platform with RSVP, guest management,
+and automated Google Sheets data collection.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Stunting Case Monitoring App
+Data-driven mobile application for tracking and visualizing
+stunting cases.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Student Council E-Voting System
+Web-based voting system designed for secure and transparent
+student council elections.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Student Fitness Tracking Platform
+Student activity tracking platform with geolocation,
+photo verification, and data visualization.
 
-### `npm run eject`
+## Tech Stack
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- React
+- React Native
+- JavaScript
+- Python
+- Laravel
+- Supabase
+- PostgreSQL
+- Firebase
+- REST API
+- AI / LLM Integration
+- Machine Learning
+- NLP
+- Git & GitHub
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Experience
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- ICT Teacher — SMA Citra Kasih
+- Full-Stack Developer & Mobile Engineer — Manado Post
+- Freelance Web & Mobile Developer
+- Assistant Lecturer — Universitas Klabat
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Connect
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- LinkedIn: https://www.linkedin.com/in/jacky-karongkong-70a896293/
+- GitHub: https://github.com/jck-y

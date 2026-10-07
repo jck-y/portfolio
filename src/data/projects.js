@@ -14,7 +14,7 @@
 export const projects = [
   {
     name: "Manado Post App & AI Chatbot",
-    desc: "React Native news app with an integrated LLM chatbot, debugged and optimized for 10.000+ active downloads on Google Play. (React Native, AI Integration, Web Scraping)",
+    desc: "React Native news application with an integrated LLM chatbot, AI-powered news summarization, RAG, voice interaction, text-to-speech, and subscription-based AI features. Built and optimized for a production app with 10,000+ downloads (React Native, AI Integration, Web Scraping)",
     device: "mobile",
     slug: "manado-post",
     images: [
