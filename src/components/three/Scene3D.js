@@ -9,7 +9,8 @@ import useDriveInput from "../../hooks/useDriveInput";
 function supportsWebGL() {
   try {
     const canvas = document.createElement("canvas");
-    const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    const gl =
+      canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     if (!gl) return false;
     // Release the probe context right away so it doesn't count against the
     // browser's limit on live WebGL contexts.
@@ -23,7 +24,8 @@ function supportsWebGL() {
 const StaticFallback = () => (
   <div className="absolute inset-0 flex items-center justify-center bg-paper-100 px-6">
     <p className="font-display italic text-ink-950 text-lg text-center max-w-xs">
-      Dunia 3D tidak didukung di perangkat ini — pakai menu di bawah untuk membuka tiap bagian.
+      Dunia 3D tidak didukung di perangkat ini - pakai menu di bawah untuk
+      membuka tiap bagian.
     </p>
   </div>
 );
@@ -51,11 +53,17 @@ const TOUCH_QUERY = "(pointer: coarse)";
 // Read synchronously so <Canvas> is created with the right `gl` options the
 // first time. (`antialias` can't be changed after the context exists, and the
 // old code initialised these to `false` and only corrected them in an effect.)
-const matches = (q) => typeof window !== "undefined" && window.matchMedia(q).matches;
+const matches = (q) =>
+  typeof window !== "undefined" && window.matchMedia(q).matches;
 
 const DESKTOP_MAX_DPR = 1.5;
 
-const Scene3D = ({ activeSection, onEnterPortal, resetSignal, active = true }) => {
+const Scene3D = ({
+  activeSection,
+  onEnterPortal,
+  resetSignal,
+  active = true,
+}) => {
   const reduceMotion = useReducedMotion();
   const { inputRef, setTouchInput, releaseTouchInput } = useDriveInput();
   const [webglOK] = useState(supportsWebGL);

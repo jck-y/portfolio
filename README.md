@@ -1,4 +1,4 @@
-# Jacky Karongkong — Software Engineer Portfolio
+# Jacky Karongkong - Software Engineer Portfolio
 
 Personal portfolio website of **Jacky Karongkong**, a Software Engineer
 and Full-Stack Developer focused on web development, mobile applications,
@@ -57,10 +57,10 @@ photo verification, and data visualization.
 
 ## Experience
 
-- ICT Teacher — SMA Citra Kasih
-- Full-Stack Developer & Mobile Engineer — Manado Post
+- ICT Teacher - SMA Citra Kasih
+- Full-Stack Developer & Mobile Engineer - Manado Post
 - Freelance Web & Mobile Developer
-- Assistant Lecturer — Universitas Klabat
+- Assistant Lecturer - Universitas Klabat
 
 ## Connect
 
