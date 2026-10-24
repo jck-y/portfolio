@@ -21,9 +21,10 @@ const TARGET_FPS = 24;
 const FRAME_MS = 1000 / TARGET_FPS;
 const BUCKETS = 12;
 const MAX_ALPHA = 0.2;
+const DOT_BOOST = 2.2; // visible alpha multiplier; bucketing stays on MAX_ALPHA
 
 const BUCKET_STYLES = Array.from({ length: BUCKETS }, (_, i) => {
-  const alpha = ((i + 0.5) / BUCKETS) * MAX_ALPHA;
+  const alpha = Math.min(1, ((i + 0.5) / BUCKETS) * MAX_ALPHA * DOT_BOOST);
   return `rgba(214,51,108,${alpha.toFixed(3)})`;
 });
 const BUCKET_SIZES = Array.from(

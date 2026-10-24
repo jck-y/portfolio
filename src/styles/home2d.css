@@ -1400,6 +1400,71 @@
     #fffdfb;
 }
 
+/* Glitch-error layer: pink scanlines + short bursts of torn slices.
+   CSS only (transform/clip-path/opacity), no extra canvas work. */
+.two-d-depth-background::before,
+.two-d-depth-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.two-d-depth-background::before {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(214,51,108,0.18) 0,
+    rgba(214,51,108,0.18) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  animation: bg-glitch-flicker 6s steps(1) infinite;
+}
+
+.two-d-depth-background::after {
+  background: rgba(255,45,120,0.42);
+  clip-path: inset(100% 0 0 0);
+  animation: bg-glitch-slice 9s steps(1) infinite;
+}
+
+.two-d-depth-background canvas {
+  animation: bg-glitch-jitter 9s steps(1) infinite;
+}
+
+@keyframes bg-glitch-flicker {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+  56%      { opacity: 1; }
+}
+
+/* 9s cycle, 2 bursts; each slice holds ~0.5s so it reads as a slow blink */
+@keyframes bg-glitch-slice {
+  0%, 100% { clip-path: inset(100% 0 0 0); transform: none; }
+  25%      { clip-path: inset(18% 0 70% 0);  transform: translateX(-36px); }
+  30%      { clip-path: inset(62% 0 30% 0);  transform: translateX(40px); }
+  35%      { clip-path: inset(100% 0 0 0);   transform: none; }
+  70%      { clip-path: inset(34% 0 58% 0);  transform: translateX(44px); }
+  75%      { clip-path: inset(100% 0 0 0);   transform: none; }
+}
+
+@keyframes bg-glitch-jitter {
+  0%, 100% { transform: none; }
+  25%      { transform: translate(-14px, 2px); }
+  30%      { transform: translate(16px, -2px); }
+  35%      { transform: none; }
+  70%      { transform: translate(18px, 0); }
+  75%      { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .two-d-depth-background::before,
+  .two-d-depth-background::after,
+  .two-d-depth-background canvas {
+    animation: none;
+  }
+}
+
 .two-d-depth-background canvas {
   position: absolute;
 

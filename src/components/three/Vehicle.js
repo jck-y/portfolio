@@ -109,7 +109,7 @@ const Vehicle = ({ inputRef, portals, paused, onEnterPortal, resetSignal, reduce
     <group ref={group}>
       <mesh position={[0, 0.42, 0]}>
         <boxGeometry args={[1.15, 0.45, 2.1]} />
-        <meshLambertMaterial color="#FFFFFF" />
+        <meshLambertMaterial color="#E9E4EE" emissive="#3A3040" />
       </mesh>
       <mesh position={[0, 0.78, -0.15]}>
         <boxGeometry args={[0.85, 0.32, 1.05]} />
@@ -119,6 +119,19 @@ const Vehicle = ({ inputRef, portals, paused, onEnterPortal, resetSignal, reduce
         <boxGeometry args={[1.17, 0.08, 1.2]} />
         <meshLambertMaterial color="#D6336C" emissive="#D6336C" emissiveIntensity={0.15} />
       </mesh>
+      {/* Headlights, taillights and underglow: the only light the car brings into the void. */}
+      {[-0.4, 0.4].map((x) => (
+        <mesh key={x} position={[x, 0.46, 1.06]}>
+          <boxGeometry args={[0.28, 0.12, 0.04]} />
+          <meshBasicMaterial color="#FFF3F8" toneMapped={false} />
+        </mesh>
+      ))}
+      <mesh position={[0, 0.5, -1.06]}>
+        <boxGeometry args={[0.9, 0.08, 0.04]} />
+        <meshBasicMaterial color="#FF3D7F" toneMapped={false} />
+      </mesh>
+      <pointLight position={[0, 0.7, 1.8]} color="#FFE3EF" intensity={14} distance={9} />
+      <pointLight position={[0, 0.08, 0]} color="#D6336C" intensity={5} distance={4.5} />
       {[
         [-0.62, 0.72],
         [0.62, 0.72],
